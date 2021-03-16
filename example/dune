@@ -1,0 +1,5 @@
+(executable
+ (name download_file)
+ (modules download_file)
+ (libraries node)
+ (modes js))
