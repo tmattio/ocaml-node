@@ -27,7 +27,7 @@ module Agent = struct
 
   let on t = function
     | `Keylog f ->
-      on t "keylog" @@ [%js.of: Buffer.t -> Tls.TLSSocket.t -> unit] f
+      on t "keylog" @@ [%js.of: Buffer.Buffer.t -> Tls.TLSSocket.t -> unit] f
 end
 
 module Server = struct
@@ -68,7 +68,7 @@ module RequestOptions = struct
     -> ?setHost:bool
     -> ?socketPath:string
     -> ?timeout:int
-    -> ?signal:AbortSignal.t
+    -> ?signal:Global.AbortSignal.t
     -> unit
     -> t
     [@@js.builder]

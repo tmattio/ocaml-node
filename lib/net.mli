@@ -29,7 +29,7 @@ module Socket : sig
     :  t
     -> [< `Close of hadError:bool -> unit
        | `Connect of unit -> unit
-       | `Data of Buffer.t -> unit
+       | `Data of Buffer.Buffer.t -> unit
        | `Drain of unit -> unit
        | `End of unit -> unit
        | `Error of Import.Error.t -> unit
@@ -44,7 +44,7 @@ module Socket : sig
        ]
     -> unit
 
-  val address : t -> Address.t
+  val address : t -> Global.Address.t
 
   val bytesRead : t -> int
 
@@ -59,8 +59,8 @@ module Socket : sig
       val t_to_js : t -> Ojs.t
 
       val create
-        :  ?buffer:Buffer.t
-        -> ?callback:(int -> Buffer.t -> unit)
+        :  ?buffer:Buffer.Buffer.t
+        -> ?callback:(int -> Buffer.Buffer.t -> unit)
         -> unit
         -> t
     end
@@ -101,7 +101,7 @@ module Socket : sig
   val end_
     :  t
     -> ?data:
-         [ `Buffer of Buffer.t
+         [ `Buffer of Buffer.Buffer.t
          | `String of string
          | `Uint8Array of Uint8Array.t
          ]
@@ -143,7 +143,7 @@ module Socket : sig
   val write
     :  t
     -> ?data:
-         [ `Buffer of Buffer.t
+         [ `Buffer of Buffer.Buffer.t
          | `String of string
          | `Uint8Array of Uint8Array.t
          ]
@@ -189,7 +189,7 @@ module Server : sig
        ]
     -> unit
 
-  val address : t -> Address.t option
+  val address : t -> Global.Address.t option
 
   val close : t -> ?callback:(unit -> unit) -> unit -> t
 
@@ -211,7 +211,7 @@ module Server : sig
       -> ?readableAll:bool
       -> ?writableAll:bool
       -> ?ipv6Only:bool
-      -> ?signal:Import.AbortSignal.t
+      -> ?signal:Global.AbortSignal.t
       -> unit
       -> t
   end
@@ -254,8 +254,8 @@ module ConnectOptions : sig
     val t_to_js : t -> Ojs.t
 
     val create
-      :  ?buffer:Buffer.t
-      -> ?callback:(int -> Buffer.t -> unit)
+      :  ?buffer:Buffer.Buffer.t
+      -> ?callback:(int -> Buffer.Buffer.t -> unit)
       -> unit
       -> t
   end
@@ -291,13 +291,13 @@ end
 
 val connect
   :  ConnectOptions.t
-  -> ?connectionListener:(Buffer.t -> unit)
+  -> ?connectionListener:(Buffer.Buffer.t -> unit)
   -> unit
   -> Socket.t
 
 val createConnection
   :  ConnectOptions.t
-  -> ?connectionListener:(Buffer.t -> unit)
+  -> ?connectionListener:(Buffer.Buffer.t -> unit)
   -> unit
   -> Socket.t
 

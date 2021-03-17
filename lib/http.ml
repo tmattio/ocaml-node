@@ -52,7 +52,9 @@ module ClientRequest = struct
       on t "abort" @@ [%js.of: unit -> unit] f
     | `Connect f ->
       on t "connect"
-      @@ [%js.of: IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit] f
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f
     | `Continue f ->
       on t "continue" @@ [%js.of: unit -> unit] f
     | `Information f ->
@@ -65,13 +67,15 @@ module ClientRequest = struct
       on t "timeout" @@ [%js.of: unit -> unit] f
     | `Upgrade f ->
       on t "upgrade"
-      @@ [%js.of: IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit] f
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f
 
   val aborted : t -> bool [@@js.get]
 
   val end_
     :  t
-    -> ?data:([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ?data:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -122,7 +126,7 @@ module ClientRequest = struct
 
   val write
     :  t
-    -> ([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -154,8 +158,8 @@ module Agent = struct
       type t = private Ojs.t [@@js]
 
       val create
-        :  ?buffer:Buffer.t
-        -> ?callback:(int -> Buffer.t -> unit)
+        :  ?buffer:Buffer.Buffer.t
+        -> ?callback:(int -> Buffer.Buffer.t -> unit)
         -> unit
         -> t
         [@@js.builder]
@@ -243,7 +247,7 @@ module ServerResponse = struct
 
   val end_
     :  t
-    -> ?data:([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ?data:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -288,7 +292,7 @@ module ServerResponse = struct
 
   val write
     :  t
-    -> ([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -327,7 +331,9 @@ module Server = struct
       on t "close" @@ [%js.of: unit -> unit] f
     | `Connect f ->
       on t "connect"
-      @@ [%js.of: IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit] f
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f
     | `Connection f ->
       on t "connection" @@ [%js.of: Stream.Duplex.t -> unit] f
     | `Request f ->
@@ -335,7 +341,9 @@ module Server = struct
       @@ [%js.of: IncomingMessage.t -> ServerResponse.t -> unit] f
     | `Upgrade f ->
       on t "upgrade"
-      @@ [%js.of: IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit] f
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f
 
   val close : t -> ?callback:(unit -> unit) -> unit -> unit [@@js.call]
 
@@ -402,7 +410,7 @@ module RequestOptions = struct
     -> ?setHost:bool
     -> ?socketPath:string
     -> ?timeout:int
-    -> ?signal:AbortSignal.t
+    -> ?signal:Global.AbortSignal.t
     -> unit
     -> t
     [@@js.builder]

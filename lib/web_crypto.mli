@@ -7,7 +7,7 @@ module AesCbcParams : sig
 
   val t_to_js : t -> Ojs.t
 
-  val iv : t -> Buffer.t
+  val iv : t -> Buffer.Buffer.t
 
   val name : t -> string
 end
@@ -19,7 +19,7 @@ module AesCtrParams : sig
 
   val t_to_js : t -> Ojs.t
 
-  val counter : t -> Buffer.t
+  val counter : t -> Buffer.Buffer.t
 
   val length : t -> int
 
@@ -33,9 +33,9 @@ module AesGcmParams : sig
 
   val t_to_js : t -> Ojs.t
 
-  val additionalData : t -> Buffer.t or_undefined
+  val additionalData : t -> Buffer.Buffer.t or_undefined
 
-  val iv : t -> Buffer.t
+  val iv : t -> Buffer.Buffer.t
 
   val name : t -> string
 
@@ -119,11 +119,11 @@ module HkdfParams : sig
 
   val hash : t -> string
 
-  val info : t -> Buffer.t
+  val info : t -> Buffer.Buffer.t
 
   val name : t -> string
 
-  val salt : t -> Buffer.t
+  val salt : t -> Buffer.Buffer.t
 end
 
 module HmacImportParams : sig
@@ -187,7 +187,7 @@ module Pbkdf2Params : sig
 
   val name : t -> string
 
-  val salt : t -> Buffer.t
+  val salt : t -> Buffer.Buffer.t
 end
 
 module RsaHashedImportParams : sig
@@ -225,7 +225,7 @@ module RsaOaepParams : sig
 
   val t_to_js : t -> Ojs.t
 
-  val label : t -> Buffer.t
+  val label : t -> Buffer.Buffer.t
 
   val name : t -> string
 end
@@ -273,7 +273,7 @@ module NodeDhKeyGenParams : sig
 
   val group : t -> string
 
-  val prime : t -> Buffer.t
+  val prime : t -> Buffer.Buffer.t
 
   val primeLength : t -> int
 end
@@ -369,7 +369,7 @@ module NodeScryptParams : sig
 
   val r : t -> int
 
-  val salt : t -> Buffer.t
+  val salt : t -> Buffer.Buffer.t
 end
 
 module CryptoKey : sig
@@ -434,7 +434,7 @@ module SubtleCrypto : sig
         ]
        [@js.union])
     -> CryptoKey.t
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> ArrayBuffer.t Promise.t
 
   val deriveBits
@@ -466,7 +466,7 @@ module SubtleCrypto : sig
     -> string list
     -> ArrayBuffer.t Promise.t
 
-  val digest : t -> string -> Buffer.t -> ArrayBuffer.t Promise.t
+  val digest : t -> string -> Buffer.Buffer.t -> ArrayBuffer.t Promise.t
 
   val encrypt
     :  t
@@ -499,7 +499,7 @@ module SubtleCrypto : sig
   val importKey
     :  t
     -> string
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> ([ `RsaHashedImport of RsaHashedImportParams.t
         | `EcKeyImport of EcKeyImportParams.t
         | `HmacImport of HmacImportParams.t
@@ -525,13 +525,13 @@ module SubtleCrypto : sig
         ]
        [@js.union])
     -> CryptoKey.t
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> ArrayBuffer.t Promise.t
 
   val unwrapKey
     :  t
     -> string
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> CryptoKey.t
     -> ([ `RsaOaep of RsaOaepParams.t
         | `AesCtr of AesCtrParams.t
@@ -560,8 +560,8 @@ module SubtleCrypto : sig
         ]
        [@js.union])
     -> CryptoKey.t
-    -> Buffer.t
-    -> Buffer.t
+    -> Buffer.Buffer.t
+    -> Buffer.Buffer.t
     -> bool Promise.t
 
   val wrapKey
@@ -600,5 +600,5 @@ module Crypto : sig
 
   val subtle : t -> SubtleCrypto.t
 
-  val getRandomValues : t -> Buffer.t -> Buffer.t
+  val getRandomValues : t -> Buffer.Buffer.t -> Buffer.Buffer.t
 end

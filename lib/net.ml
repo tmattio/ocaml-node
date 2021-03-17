@@ -28,7 +28,7 @@ module Socket = struct
       on t "connect" @@ [%js.of: unit -> unit] f
     | `Data f ->
       (* TODO: Can also be [string -> unit] depending on Socket.setEncoding() *)
-      on t "connect" @@ [%js.of: Buffer.t -> unit] f
+      on t "connect" @@ [%js.of: Buffer.Buffer.t -> unit] f
     | `Drain f ->
       on t "drain" @@ [%js.of: unit -> unit] f
     | `End f ->
@@ -49,7 +49,7 @@ module Socket = struct
     | `Timeout f ->
       on t "timeout" @@ [%js.of: unit -> unit] f
 
-  val address : t -> Address.t [@@js.get]
+  val address : t -> Global.Address.t [@@js.get]
 
   val bytesRead : t -> int [@@js.get]
 
@@ -60,8 +60,8 @@ module Socket = struct
       type t = private Ojs.t [@@js]
 
       val create
-        :  ?buffer:Buffer.t
-        -> ?callback:(int -> Buffer.t -> unit)
+        :  ?buffer:Buffer.Buffer.t
+        -> ?callback:(int -> Buffer.Buffer.t -> unit)
         -> unit
         -> t
         [@@js.builder]
@@ -101,7 +101,7 @@ module Socket = struct
     :  t
     -> ?data:
          ([ `String of string
-          | `Buffer of Buffer.t
+          | `Buffer of Buffer.Buffer.t
           | `Uint8Array of Uint8Array.t
           ][@js.union])
     -> ?encoding:string
@@ -145,7 +145,7 @@ module Socket = struct
     :  t
     -> ?data:
          ([ `String of string
-          | `Buffer of Buffer.t
+          | `Buffer of Buffer.Buffer.t
           | `Uint8Array of Uint8Array.t
           ][@js.union])
     -> ?encoding:string
@@ -189,7 +189,7 @@ module Server = struct
 
   (* TODO: For a server listening on a pipe or Unix domain socket, the name is
      returned as a string. *)
-  val address : t -> Address.t or_undefined [@@js.get]
+  val address : t -> Global.Address.t or_undefined [@@js.get]
 
   val close : t -> ?callback:(unit -> unit) -> unit -> t [@@js.call]
 
@@ -207,7 +207,7 @@ module Server = struct
       -> ?readableAll:bool
       -> ?writableAll:bool
       -> ?ipv6Only:bool
-      -> ?signal:AbortSignal.t
+      -> ?signal:Global.AbortSignal.t
       -> unit
       -> t
       [@@js.builder]
@@ -248,8 +248,8 @@ module ConnectOptions = struct
     type t = private Ojs.t [@@js]
 
     val create
-      :  ?buffer:Buffer.t
-      -> ?callback:(int -> Buffer.t -> unit)
+      :  ?buffer:Buffer.Buffer.t
+      -> ?callback:(int -> Buffer.Buffer.t -> unit)
       -> unit
       -> t
       [@@js.builder]
@@ -283,14 +283,14 @@ end
 
 val connect
   :  ConnectOptions.t
-  -> ?connectionListener:(Buffer.t -> unit)
+  -> ?connectionListener:(Buffer.Buffer.t -> unit)
   -> unit
   -> Socket.t
   [@@js.global "net.connect"]
 
 val createConnection
   :  ConnectOptions.t
-  -> ?connectionListener:(Buffer.t -> unit)
+  -> ?connectionListener:(Buffer.Buffer.t -> unit)
   -> unit
   -> Socket.t
   [@@js.global "net.createConnection"]

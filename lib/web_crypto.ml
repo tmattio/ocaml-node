@@ -5,7 +5,8 @@ module AesCbcParams = struct
 
   val iv
     :  t
-    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *) Buffer.t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
     [@@js.get]
 
   val name : t -> string [@@js.get]
@@ -16,7 +17,8 @@ module AesCtrParams = struct
 
   val counter
     :  t
-    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *) Buffer.t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
     [@@js.get]
 
   val length : t -> int [@@js.get]
@@ -30,12 +32,13 @@ module AesGcmParams = struct
   val additionalData
     :  t
     -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
-       Buffer.t or_undefined
+       Buffer.Buffer.t or_undefined
     [@@js.get]
 
   val iv
     :  t
-    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *) Buffer.t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
     [@@js.get]
 
   val name : t -> string [@@js.get]
@@ -94,14 +97,16 @@ module HkdfParams = struct
 
   val info
     :  t
-    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *) Buffer.t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
     [@@js.get]
 
   val name : t -> string [@@js.get]
 
   val salt
     :  t
-    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *) Buffer.t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
     [@@js.get]
 end
 
@@ -148,7 +153,8 @@ module Pbkdf2Params = struct
 
   val salt
     :  t
-    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *) Buffer.t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
     [@@js.get]
 end
 
@@ -177,7 +183,8 @@ module RsaOaepParams = struct
 
   val label
     :  t
-    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *) Buffer.t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
     [@@js.get]
 
   val name : t -> string [@@js.get]
@@ -210,7 +217,7 @@ module NodeDhKeyGenParams = struct
 
   val group : t -> string [@@js.get]
 
-  val prime : t -> Buffer.t [@@js.get]
+  val prime : t -> Buffer.Buffer.t [@@js.get]
 
   val primeLength : t -> int [@@js.get]
 end
@@ -281,7 +288,7 @@ module NodeScryptParams = struct
   val salt
     :  t
     -> (* <string> | <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
-       Buffer.t
+       Buffer.Buffer.t
     [@@js.get]
 end
 
@@ -349,7 +356,7 @@ module SubtleCrypto = struct
         ]
        [@js.union])
     -> CryptoKey.t
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> ArrayBuffer.t Promise.t
     [@@js.call]
 
@@ -384,7 +391,8 @@ module SubtleCrypto = struct
     -> ArrayBuffer.t Promise.t
     [@@js.call]
 
-  val digest : t -> string -> Buffer.t -> ArrayBuffer.t Promise.t [@@js.call]
+  val digest : t -> string -> Buffer.Buffer.t -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val encrypt
     :  t
@@ -420,7 +428,7 @@ module SubtleCrypto = struct
   val importKey
     :  t
     -> string
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> ([ `RsaHashedImport of RsaHashedImportParams.t
         | `EcKeyImport of EcKeyImportParams.t
         | `HmacImport of HmacImportParams.t
@@ -447,14 +455,14 @@ module SubtleCrypto = struct
         ]
        [@js.union])
     -> CryptoKey.t
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> ArrayBuffer.t Promise.t
     [@@js.call]
 
   val unwrapKey
     :  t
     -> string
-    -> Buffer.t
+    -> Buffer.Buffer.t
     -> CryptoKey.t
     -> ([ `RsaOaep of RsaOaepParams.t
         | `AesCtr of AesCtrParams.t
@@ -484,8 +492,8 @@ module SubtleCrypto = struct
         ]
        [@js.union])
     -> CryptoKey.t
-    -> Buffer.t
-    -> Buffer.t
+    -> Buffer.Buffer.t
+    -> Buffer.Buffer.t
     -> bool Promise.t
     [@@js.call]
 
@@ -518,5 +526,5 @@ module Crypto = struct
 
   val subtle : t -> SubtleCrypto.t [@@js.get]
 
-  val getRandomValues : t -> Buffer.t -> Buffer.t [@@js.call]
+  val getRandomValues : t -> Buffer.Buffer.t -> Buffer.Buffer.t [@@js.call]
 end

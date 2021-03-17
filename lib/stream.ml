@@ -31,7 +31,7 @@ module Readable = struct
 
   type chunk =
     ([ `String of string
-     | `Buffer of Buffer.t
+     | `Buffer of Buffer.Buffer.t
      ]
     [@js.union])
   [@@js]
@@ -41,7 +41,7 @@ module Readable = struct
     | "string" ->
       `String ([%js.to: string] js_val)
     | _ ->
-      `Buffer ([%js.to: Buffer.t] js_val)
+      `Buffer ([%js.to: Buffer.Buffer.t] js_val)
 
   let on t = function
     | `Close f ->
@@ -76,7 +76,7 @@ module Readable = struct
   val pipe : t -> Writable.t -> ?options:PipeOptions.t -> unit -> Writable.t
     [@@js.call]
 
-  val read : t -> ?size:int -> unit -> Buffer.t or_undefined [@@js.call]
+  val read : t -> ?size:int -> unit -> Buffer.Buffer.t or_undefined [@@js.call]
 
   val readable : t -> bool [@@js.get]
 
@@ -98,7 +98,7 @@ module Readable = struct
 
   val unpipe : t -> ?destination:Writable.t -> unit -> t [@@js.call]
 
-  val unshift : t -> Buffer.t -> string -> unit [@@js.call]
+  val unshift : t -> Buffer.Buffer.t -> string -> unit [@@js.call]
 
   (* val wrap : t -> (stream) [@@js.get] *)
 end
@@ -110,7 +110,7 @@ module Duplex = struct
 
   type chunk =
     ([ `String of string
-     | `Buffer of Buffer.t
+     | `Buffer of Buffer.Buffer.t
      ]
     [@js.union])
   [@@js]
@@ -120,7 +120,7 @@ module Duplex = struct
     | "string" ->
       `String ([%js.to: string] js_val)
     | _ ->
-      `Buffer ([%js.to: Buffer.t] js_val)
+      `Buffer ([%js.to: Buffer.Buffer.t] js_val)
 
   let on t = function
     | `Close f ->

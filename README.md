@@ -20,14 +20,14 @@ opam install node
 | -------------------- | -------- | ------------------- |
 | Assertion testing    | ❌        | n/a                 |
 | Async hooks          | ❌        | n/a                 |
-| Buffer               | 🚧        | `Node.Buffer`       |
-| Child processes      | 🚧        | `Node.ChildProcess` |
+| Buffer               | ✅        | `Node.Buffer`       |
+| Child processes      | ✅        | `Node.ChildProcess` |
 | Cluster              | ❌        | n/a                 |
 | Console              | 🚧        | `Node.Console`      |
 | Crypto               | 🚧        | `Node.Crypto`       |
 | Debugger             | ❌        | n/a                 |
 | Diagnostics Channel  | ❌        | n/a                 |
-| DNS                  | 🚧        | `Node.Dns`          |
+| DNS                  | ✅        | `Node.Dns`          |
 | Domain               | ❌        | n/a                 |
 | Errors               | ❌        | n/a                 |
 | Events               | ❌        | n/a                 |

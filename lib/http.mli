@@ -56,13 +56,15 @@ module ClientRequest : sig
   val on
     :  t
     -> [< `Abort of unit -> unit
-       | `Connect of IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit
+       | `Connect of
+         IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit
        | `Continue of unit -> unit
        | `Information of t -> unit
        | `Response of IncomingMessage.t -> unit
        | `Socket of Stream.Duplex.t -> unit
        | `Timeout of unit -> unit
-       | `Upgrade of IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit
+       | `Upgrade of
+         IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit
        ]
     -> unit
 
@@ -70,7 +72,7 @@ module ClientRequest : sig
 
   val end_
     :  t
-    -> ?data:([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ?data:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -119,7 +121,7 @@ module ClientRequest : sig
 
   val write
     :  t
-    -> ([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -161,8 +163,8 @@ module Agent : sig
       val t_to_js : t -> Ojs.t
 
       val create
-        :  ?buffer:Buffer.t
-        -> ?callback:(int -> Buffer.t -> unit)
+        :  ?buffer:Buffer.Buffer.t
+        -> ?callback:(int -> Buffer.Buffer.t -> unit)
         -> unit
         -> t
     end
@@ -244,7 +246,7 @@ module ServerResponse : sig
 
   val t_to_js : t -> Ojs.t
 
-  val on : t -> [< `Close of unit -> 'a | `Finish of unit -> 'b ] -> unit
+  val on : t -> [< `Close of unit -> unit | `Finish of unit -> unit ] -> unit
 
   val addTrailers : t -> string Dict.t
 
@@ -252,7 +254,7 @@ module ServerResponse : sig
 
   val end_
     :  t
-    -> ?data:([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ?data:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -296,7 +298,7 @@ module ServerResponse : sig
 
   val write
     :  t
-    -> ([ `String of string | `Buffer of Buffer.t ][@js.union])
+    -> ([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
@@ -328,10 +330,12 @@ module Server : sig
        | `CheckExpectation of IncomingMessage.t -> t -> unit
        | `ClientError of Import.Error.t -> Stream.Duplex.t -> unit
        | `Close of unit -> unit
-       | `Connect of IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit
+       | `Connect of
+         IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit
        | `Connection of Stream.Duplex.t -> unit
        | `Request of IncomingMessage.t -> t -> unit
-       | `Upgrade of IncomingMessage.t -> Stream.Duplex.t -> Buffer.t -> unit
+       | `Upgrade of
+         IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit
        ]
     -> unit
 
@@ -403,7 +407,7 @@ module RequestOptions : sig
     -> ?setHost:bool
     -> ?socketPath:string
     -> ?timeout:int
-    -> ?signal:AbortSignal.t
+    -> ?signal:Global.AbortSignal.t
     -> unit
     -> t
 end

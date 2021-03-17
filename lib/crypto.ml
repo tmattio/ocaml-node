@@ -22,7 +22,7 @@ module KeyObject = struct
   val asymmetricKeyType : t -> string [@@js.get]
 
   (* val export: t -> ?options:ExportOptions.t -> unit -> ([ `String of string |
-     `Buffer of Buffer.t ][@js.union]) [@@js.get] *)
+     `Buffer of Buffer.Buffer.t ][@js.union]) [@@js.get] *)
 
   val symmetricKeySize : t -> int [@@js.get]
 
@@ -90,7 +90,7 @@ module X509Certificate = struct
 
   val publicKey : t -> KeyObject.t [@@js.get]
 
-  val raw : t -> Buffer.t [@@js.get]
+  val raw : t -> Buffer.Buffer.t [@@js.get]
 
   val serialNumber : t -> string [@@js.get]
 
@@ -100,7 +100,7 @@ module X509Certificate = struct
 
   val toJSON : t -> string [@@js.get]
 
-  val toLegacyObject : t -> Certificate.t [@@js.get]
+  val toLegacyObject : t -> Global.Certificate.t [@@js.get]
 
   val toString : t -> string [@@js.get]
 
@@ -111,7 +111,7 @@ module X509Certificate = struct
   val verify : t -> KeyObject.t -> string [@@js.call]
 
   val create
-    :  buffer:([ `String of string | `Buffer of Buffer.t ][@js.union])
+    :  buffer:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> t
     [@@js.builder]
 end

@@ -11,15 +11,15 @@ module TLSSocket = struct
 
   let on t = function
     | `Keylog f ->
-      on t "keylog" @@ [%js.of: Buffer.t -> unit] f
+      on t "keylog" @@ [%js.of: Buffer.Buffer.t -> unit] f
     | `OCSPResponse f ->
-      on t "OCSPResponse" @@ [%js.of: Buffer.t -> unit] f
+      on t "OCSPResponse" @@ [%js.of: Buffer.Buffer.t -> unit] f
     | `SecureConnect f ->
       on t "secureConnect" @@ [%js.of: unit -> unit] f
     | `Session f ->
-      on t "session" @@ [%js.of: Buffer.t -> unit] f
+      on t "session" @@ [%js.of: Buffer.Buffer.t -> unit] f
 
-  module Certificate = Certificate
+  module Certificate = Global.Certificate
 
   module Cipher = struct
     type t = private Ojs.t [@@js]
@@ -41,7 +41,7 @@ module TLSSocket = struct
     val size : t -> string [@@js.get]
   end
 
-  val address : t -> Address.t [@@js.get]
+  val address : t -> Global.Address.t [@@js.get]
 
   val authorizationError : t -> Error.t [@@js.get]
 
@@ -53,32 +53,37 @@ module TLSSocket = struct
 
   val encrypted : t -> bool [@@js.get]
 
-  val exportKeyingMaterial : t -> int -> string -> Buffer.t -> Buffer.t
+  val exportKeyingMaterial
+    :  t
+    -> int
+    -> string
+    -> Buffer.Buffer.t
+    -> Buffer.Buffer.t
     [@@js.call]
 
-  val getCertificate : t -> Certificate.t [@@js.get]
+  val getCertificate : t -> Global.Certificate.t [@@js.get]
 
   val getCipher : t -> Cipher.t [@@js.get]
 
   val getEphemeralKeyInfo : t -> EphemeralKeyInfo.t [@@js.get]
 
-  val getFinished : t -> Buffer.t or_undefined [@@js.get]
+  val getFinished : t -> Buffer.Buffer.t or_undefined [@@js.get]
 
-  val getPeerCertificate : t -> ?detailed:bool -> unit -> Certificate.t
+  val getPeerCertificate : t -> ?detailed:bool -> unit -> Global.Certificate.t
     [@@js.call]
 
-  val getPeerFinished : t -> Buffer.t or_undefined [@@js.get]
+  val getPeerFinished : t -> Buffer.Buffer.t or_undefined [@@js.get]
 
   val getPeerX509Certificate : t -> Crypto.X509Certificate.t [@@js.get]
 
   val getProtocol : t -> string or_undefined [@@js.get]
 
-  val getSession : t -> Buffer.t [@@js.get]
+  val getSession : t -> Buffer.Buffer.t [@@js.get]
 
   (* TODO: Not sure of the return type here *)
   val getSharedSigalgs : t -> string list [@@js.get]
 
-  val getTLSTicket : t -> Buffer.t [@@js.get]
+  val getTLSTicket : t -> Buffer.Buffer.t [@@js.get]
 
   val getX509Certificate : t -> Crypto.X509Certificate.t [@@js.get]
 
@@ -101,7 +106,7 @@ module TLSSocket = struct
 
     (* TODO: Not sure about the return type here, maybe it's a
        Crypto.X509Certificate.t *)
-    val requestCert : t -> Certificate.t [@@js.get]
+    val requestCert : t -> Global.Certificate.t [@@js.get]
   end
 
   val renegotiate : t -> ?options:RenegotiateOptions.t -> (unit -> unit) -> unit
@@ -120,25 +125,25 @@ module TLSSocket = struct
       -> ?rejectUnauthorized:bool
       -> ?alpnprotocols:
            ([ `Strings of string list
-            | `Buffer of Buffer.t
-            | `Buffers of Buffer.t list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
             ][@js.union])
       -> ?snicallback:
            (string -> (Error.t -> SecureContext.t or_undefined -> unit) -> unit)
-      -> ?session:Buffer.t
+      -> ?session:Buffer.Buffer.t
       -> ?requestOCSP:bool
       -> ?secureContext:SecureContext.t
       -> ?ca:
            ([ `String of string
             | `Strings of string list
-            | `Buffer of Buffer.t
-            | `Buffers of Buffer.t list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
             ][@js.union])
       -> ?cert:
            ([ `String of string
             | `Strings of string list
-            | `Buffer of Buffer.t
-            | `Buffers of Buffer.t list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
             ][@js.union])
       -> ?sigalgs:string
       -> ?ciphers:string
@@ -146,8 +151,8 @@ module TLSSocket = struct
       -> ?crl:
            ([ `String of string
             | `Strings of string list
-            | `Buffer of Buffer.t
-            | `Buffers of Buffer.t list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
             ][@js.union])
       -> ?dhparam:string
       -> ?ecdhCurve:string
@@ -155,8 +160,8 @@ module TLSSocket = struct
       -> ?key:
            ([ `String of string
             | `Strings of string list
-            | `Buffer of Buffer.t
-            | `Buffers of Buffer.t list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
             ][@js.union])
       -> ?privateKeyEngine:string
       -> ?privateKeyIdentifier:string
@@ -166,13 +171,13 @@ module TLSSocket = struct
       -> ?pfx:
            ([ `String of string
             | `Strings of string list
-            | `Buffer of Buffer.t
-            | `Buffers of Buffer.t list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
             ][@js.union])
       -> ?secureOptions:int
       -> ?secureProtocol:string
       -> ?sessionIdContext:string
-      -> ?ticketKeys:Buffer.t
+      -> ?ticketKeys:Buffer.Buffer.t
       -> ?sessionTimeout:int
       -> unit
       -> t
@@ -194,15 +199,15 @@ module CreateSecureContextOptions = struct
   val ca
     :  t
     -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
-          Buffer.t | `Buffers of Buffer.t list] *)
-       Buffer.t or_undefined
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t or_undefined
     [@@js.get]
 
   val cert
     :  t
     -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
-          Buffer.t | `Buffers of Buffer.t list] *)
-       Buffer.t or_undefined
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t or_undefined
     [@@js.get]
 
   val sigalgs : t -> string or_undefined [@@js.get]
@@ -214,8 +219,8 @@ module CreateSecureContextOptions = struct
   val crl
     :  t
     -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
-          Buffer.t | `Buffers of Buffer.t list] *)
-       Buffer.t or_undefined
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t or_undefined
     [@@js.get]
 
   val dhparam : t -> string or_undefined [@@js.get]
@@ -227,8 +232,8 @@ module CreateSecureContextOptions = struct
   val key
     :  t
     -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
-          Buffer.t | `Buffers of Buffer.t list] *)
-       Buffer.t or_undefined
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t or_undefined
     [@@js.get]
 
   val privateKeyEngine : t -> string or_undefined [@@js.get]
@@ -244,8 +249,8 @@ module CreateSecureContextOptions = struct
   val pfx
     :  t
     -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
-          Buffer.t | `Buffers of Buffer.t list] *)
-       Buffer.t or_undefined
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t or_undefined
     [@@js.get]
 
   val secureOptions : t -> int or_undefined [@@js.get]
@@ -254,7 +259,7 @@ module CreateSecureContextOptions = struct
 
   val sessionIdContext : t -> string or_undefined [@@js.get]
 
-  val ticketKeys : t -> Buffer.t or_undefined [@@js.get]
+  val ticketKeys : t -> Buffer.Buffer.t or_undefined [@@js.get]
 
   val sessionTimeout : t -> int or_undefined [@@js.get]
 
@@ -262,14 +267,14 @@ module CreateSecureContextOptions = struct
     :  ?ca:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?cert:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?sigalgs:string
     -> ?ciphers:string
@@ -277,8 +282,8 @@ module CreateSecureContextOptions = struct
     -> ?crl:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?dhparam:string
     -> ?ecdhCurve:string
@@ -286,8 +291,8 @@ module CreateSecureContextOptions = struct
     -> ?key:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?privateKeyEngine:string
     -> ?privateKeyIdentifier:string
@@ -297,13 +302,13 @@ module CreateSecureContextOptions = struct
     -> ?pfx:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
-    -> ?ticketKeys:Buffer.t
+    -> ?ticketKeys:Buffer.Buffer.t
     -> ?sessionTimeout:int
     -> unit
     -> t
@@ -319,18 +324,24 @@ module Server = struct
     | `Connection f ->
       on t "connection" @@ [%js.of: Stream.Duplex.t -> unit] f
     | `Keylog f ->
-      on t "keylog" @@ [%js.of: Buffer.t -> TLSSocket.t -> unit] f
+      on t "keylog" @@ [%js.of: Buffer.Buffer.t -> TLSSocket.t -> unit] f
     | `NewSession f ->
       on t "newSession"
-      @@ [%js.of: Buffer.t -> Buffer.t -> (unit -> unit) -> unit] f
+      @@ [%js.of: Buffer.Buffer.t -> Buffer.Buffer.t -> (unit -> unit) -> unit]
+           f
     | `OCSPRequest f ->
       on t "OCSPRequest"
       @@ [%js.of:
-           Buffer.t -> Buffer.t -> (Error.t or_undefined -> Buffer.t) -> unit]
+           Buffer.Buffer.t
+           -> Buffer.Buffer.t
+           -> (Error.t or_undefined -> Buffer.Buffer.t)
+           -> unit]
            f
     | `ResumeSession f ->
       on t "resumeSession"
-      @@ [%js.of: Buffer.t -> (Error.t or_undefined -> Buffer.t) -> unit] f
+      @@ [%js.of:
+           Buffer.Buffer.t -> (Error.t or_undefined -> Buffer.Buffer.t) -> unit]
+           f
     | `SecureConnection f ->
       on t "secureConnection" @@ [%js.of: TLSSocket.t -> unit] f
     | `TlsClientError f ->
@@ -345,11 +356,11 @@ module Server = struct
   val addContext : t -> string -> CreateSecureContextOptions.t -> unit
     [@@js.call]
 
-  val address : t -> Address.t [@@js.get]
+  val address : t -> Global.Address.t [@@js.get]
 
   val close : t -> ?callback:(unit -> unit) -> unit -> t [@@js.call]
 
-  val getTicketKeys : t -> Buffer.t [@@js.get]
+  val getTicketKeys : t -> Buffer.Buffer.t [@@js.get]
 
   val listen : t -> unit [@@js.call]
 
@@ -360,7 +371,7 @@ module Server = struct
     -> unit
     [@@js.call]
 
-  val setTicketKeys : t -> Buffer.t [@@js.get]
+  val setTicketKeys : t -> Buffer.Buffer.t [@@js.get]
 end
 
 module CreateServerOptions = struct
@@ -369,8 +380,8 @@ module CreateServerOptions = struct
   val create
     :  ?alpnprotocols:
          ([ `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?clientCertEngine:string
     -> ?enableTrace:bool
@@ -380,20 +391,20 @@ module CreateServerOptions = struct
     -> ?sessionTimeout:int
     -> ?snicallback:
          (string -> (Error.t -> SecureContext.t or_undefined -> unit) -> unit)
-    -> ?ticketKeys:Buffer.t
-    -> ?pskCallback:(TLSSocket.t -> string -> Buffer.t or_undefined)
+    -> ?ticketKeys:Buffer.Buffer.t
+    -> ?pskCallback:(TLSSocket.t -> string -> Buffer.Buffer.t or_undefined)
     -> ?pskIdentityHint:string
     -> ?ca:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?cert:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?sigalgs:string
     -> ?ciphers:string
@@ -401,8 +412,8 @@ module CreateServerOptions = struct
     -> ?crl:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?dhparam:string
     -> ?ecdhCurve:string
@@ -410,8 +421,8 @@ module CreateServerOptions = struct
     -> ?key:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?privateKeyEngine:string
     -> ?privateKeyIdentifier:string
@@ -421,13 +432,13 @@ module CreateServerOptions = struct
     -> ?pfx:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
-    -> ?ticketKeys:Buffer.t
+    -> ?ticketKeys:Buffer.Buffer.t
     -> ?sessionTimeout:int
     -> ?insecureHTTPParser:bool
     -> ?maxHeaderSize:int
@@ -443,8 +454,8 @@ module ConnectOptions = struct
     type t = private Ojs.t [@@js]
 
     val create
-      :  ?buffer:Buffer.t
-      -> ?callback:(int -> Buffer.t -> unit)
+      :  ?buffer:Buffer.Buffer.t
+      -> ?callback:(int -> Buffer.Buffer.t -> unit)
       -> unit
       -> t
       [@@js.builder]
@@ -458,16 +469,16 @@ module ConnectOptions = struct
     -> ?socket:Stream.Duplex.t
     -> ?allowHalfOpen:bool
     -> ?rejectUnauthorized:bool
-    -> ?pskCallback:(string -> Buffer.t)
+    -> ?pskCallback:(string -> Buffer.Buffer.t)
     -> ?alpnprotocols:
          ([ `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           | `Uint8Array of Uint8Array.t
           ][@js.union])
     -> ?servername:string
-    -> ?checkServerIdentity:(string -> Certificate.t -> unit)
-    -> ?session:Buffer.t
+    -> ?checkServerIdentity:(string -> Global.Certificate.t -> unit)
+    -> ?session:Buffer.Buffer.t
     -> ?minDHSize:int
     -> ?highWaterMark:int
     -> ?secureContext:SecureContext.t
@@ -475,14 +486,14 @@ module ConnectOptions = struct
     -> ?ca:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?cert:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?sigalgs:string
     -> ?ciphers:string
@@ -490,8 +501,8 @@ module ConnectOptions = struct
     -> ?crl:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?dhparam:string
     -> ?ecdhCurve:string
@@ -499,8 +510,8 @@ module ConnectOptions = struct
     -> ?key:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?privateKeyEngine:string
     -> ?privateKeyIdentifier:string
@@ -510,13 +521,13 @@ module ConnectOptions = struct
     -> ?pfx:
          ([ `String of string
           | `Strings of string list
-          | `Buffer of Buffer.t
-          | `Buffers of Buffer.t list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
           ][@js.union])
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
-    -> ?ticketKeys:Buffer.t
+    -> ?ticketKeys:Buffer.Buffer.t
     -> ?sessionTimeout:int
     -> ?localAddress:string
     -> ?localPort:int
@@ -533,7 +544,7 @@ module ConnectOptions = struct
     [@@js.builder]
 end
 
-val checkServerIdentity : string -> Certificate.t -> Error.t or_undefined
+val checkServerIdentity : string -> Global.Certificate.t -> Error.t or_undefined
   [@@js.global "tls.checkServerIdentity"]
 
 val connect : ConnectOptions.t -> ?callback:(unit -> unit) -> unit -> Server.t

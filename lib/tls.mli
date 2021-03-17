@@ -17,14 +17,14 @@ module TLSSocket : sig
 
   val on
     :  t
-    -> [< `Keylog of Buffer.t -> unit
-       | `OCSPResponse of Buffer.t -> unit
+    -> [< `Keylog of Buffer.Buffer.t -> unit
+       | `OCSPResponse of Buffer.Buffer.t -> unit
        | `SecureConnect of unit -> unit
-       | `Session of Buffer.t -> unit
+       | `Session of Buffer.Buffer.t -> unit
        ]
     -> unit
 
-  module Certificate = Import.Certificate
+  module Certificate = Global.Certificate
 
   module Cipher : sig
     type t
@@ -54,7 +54,7 @@ module TLSSocket : sig
     val size : t -> string
   end
 
-  val address : t -> Address.t
+  val address : t -> Global.Address.t
 
   val authorizationError : t -> Error.t
 
@@ -66,7 +66,12 @@ module TLSSocket : sig
 
   val encrypted : t -> bool
 
-  val exportKeyingMaterial : t -> int -> string -> Buffer.t -> Buffer.t
+  val exportKeyingMaterial
+    :  t
+    -> int
+    -> string
+    -> Buffer.Buffer.t
+    -> Buffer.Buffer.t
 
   val getCertificate : t -> Certificate.t
 
@@ -74,22 +79,22 @@ module TLSSocket : sig
 
   val getEphemeralKeyInfo : t -> EphemeralKeyInfo.t
 
-  val getFinished : t -> Buffer.t or_undefined
+  val getFinished : t -> Buffer.Buffer.t or_undefined
 
   val getPeerCertificate : t -> ?detailed:bool -> unit -> Certificate.t
 
-  val getPeerFinished : t -> Buffer.t or_undefined
+  val getPeerFinished : t -> Buffer.Buffer.t or_undefined
 
   val getPeerX509Certificate : t -> Crypto.X509Certificate.t
 
   val getProtocol : t -> string or_undefined
 
-  val getSession : t -> Buffer.t
+  val getSession : t -> Buffer.Buffer.t
 
   (* TODO: Not sure of the return type here *)
   val getSharedSigalgs : t -> string list
 
-  val getTLSTicket : t -> Buffer.t
+  val getTLSTicket : t -> Buffer.Buffer.t
 
   val getX509Certificate : t -> Crypto.X509Certificate.t
 
@@ -135,23 +140,23 @@ module TLSSocket : sig
       -> ?requestCert:bool
       -> ?rejectUnauthorized:bool
       -> ?alpnprotocols:
-           [ `Buffer of Buffer.t
-           | `Buffers of Buffer.t list
+           [ `Buffer of Buffer.Buffer.t
+           | `Buffers of Buffer.Buffer.t list
            | `Strings of string list
            ]
       -> ?snicallback:(string -> (Error.t -> t option -> unit) -> unit)
-      -> ?session:Buffer.t
+      -> ?session:Buffer.Buffer.t
       -> ?requestOCSP:bool
       -> ?secureContext:t
       -> ?ca:
-           [ `Buffer of Buffer.t
-           | `Buffers of Buffer.t list
+           [ `Buffer of Buffer.Buffer.t
+           | `Buffers of Buffer.Buffer.t list
            | `String of string
            | `Strings of string list
            ]
       -> ?cert:
-           [ `Buffer of Buffer.t
-           | `Buffers of Buffer.t list
+           [ `Buffer of Buffer.Buffer.t
+           | `Buffers of Buffer.Buffer.t list
            | `String of string
            | `Strings of string list
            ]
@@ -159,8 +164,8 @@ module TLSSocket : sig
       -> ?ciphers:string
       -> ?clientCertEngine:string
       -> ?crl:
-           [ `Buffer of Buffer.t
-           | `Buffers of Buffer.t list
+           [ `Buffer of Buffer.Buffer.t
+           | `Buffers of Buffer.Buffer.t list
            | `String of string
            | `Strings of string list
            ]
@@ -168,8 +173,8 @@ module TLSSocket : sig
       -> ?ecdhCurve:string
       -> ?honorCipherOrder:bool
       -> ?key:
-           [ `Buffer of Buffer.t
-           | `Buffers of Buffer.t list
+           [ `Buffer of Buffer.Buffer.t
+           | `Buffers of Buffer.Buffer.t list
            | `String of string
            | `Strings of string list
            ]
@@ -179,15 +184,15 @@ module TLSSocket : sig
       -> ?minVersion:string
       -> ?passphrase:string
       -> ?pfx:
-           [ `Buffer of Buffer.t
-           | `Buffers of Buffer.t list
+           [ `Buffer of Buffer.Buffer.t
+           | `Buffers of Buffer.Buffer.t list
            | `String of string
            | `Strings of string list
            ]
       -> ?secureOptions:int
       -> ?secureProtocol:string
       -> ?sessionIdContext:string
-      -> ?ticketKeys:Buffer.t
+      -> ?ticketKeys:Buffer.Buffer.t
       -> ?sessionTimeout:int
       -> unit
       -> t
@@ -207,9 +212,9 @@ module CreateSecureContextOptions : sig
 
   val t_to_js : t -> Ojs.t
 
-  val ca : t -> Buffer.t or_undefined
+  val ca : t -> Buffer.Buffer.t or_undefined
 
-  val cert : t -> Buffer.t or_undefined
+  val cert : t -> Buffer.Buffer.t or_undefined
 
   val sigalgs : t -> string or_undefined
 
@@ -217,7 +222,7 @@ module CreateSecureContextOptions : sig
 
   val clientCertEngine : t -> string or_undefined
 
-  val crl : t -> Buffer.t or_undefined
+  val crl : t -> Buffer.Buffer.t or_undefined
 
   val dhparam : t -> string or_undefined
 
@@ -225,7 +230,7 @@ module CreateSecureContextOptions : sig
 
   val honorCipherOrder : t -> bool or_undefined
 
-  val key : t -> Buffer.t or_undefined
+  val key : t -> Buffer.Buffer.t or_undefined
 
   val privateKeyEngine : t -> string or_undefined
 
@@ -237,7 +242,7 @@ module CreateSecureContextOptions : sig
 
   val passphrase : t -> string or_undefined
 
-  val pfx : t -> Buffer.t or_undefined
+  val pfx : t -> Buffer.Buffer.t or_undefined
 
   val secureOptions : t -> int or_undefined
 
@@ -245,20 +250,20 @@ module CreateSecureContextOptions : sig
 
   val sessionIdContext : t -> string or_undefined
 
-  val ticketKeys : t -> Buffer.t or_undefined
+  val ticketKeys : t -> Buffer.Buffer.t or_undefined
 
   val sessionTimeout : t -> int or_undefined
 
   val create
     :  ?ca:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
     -> ?cert:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -266,8 +271,8 @@ module CreateSecureContextOptions : sig
     -> ?ciphers:string
     -> ?clientCertEngine:string
     -> ?crl:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -275,8 +280,8 @@ module CreateSecureContextOptions : sig
     -> ?ecdhCurve:string
     -> ?honorCipherOrder:bool
     -> ?key:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -286,15 +291,15 @@ module CreateSecureContextOptions : sig
     -> ?minVersion:string
     -> ?passphrase:string
     -> ?pfx:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
-    -> ?ticketKeys:Buffer.t
+    -> ?ticketKeys:Buffer.Buffer.t
     -> ?sessionTimeout:int
     -> unit
     -> t
@@ -328,13 +333,17 @@ module Server : sig
     -> [< `Close of unit -> unit
        | `Connection of Stream.Duplex.t -> unit
        | `Error of Import.Error.t -> unit
-       | `Keylog of Buffer.t -> TLSSocket.t -> unit
+       | `Keylog of Buffer.Buffer.t -> TLSSocket.t -> unit
        | `Listening of unit -> unit
-       | `NewSession of Buffer.t -> Buffer.t -> (unit -> unit) -> unit
+       | `NewSession of
+         Buffer.Buffer.t -> Buffer.Buffer.t -> (unit -> unit) -> unit
        | `OCSPRequest of
-         Buffer.t -> Buffer.t -> (Import.Error.t option -> Buffer.t) -> unit
+         Buffer.Buffer.t
+         -> Buffer.Buffer.t
+         -> (Import.Error.t option -> Buffer.Buffer.t)
+         -> unit
        | `ResumeSession of
-         Buffer.t -> (Import.Error.t option -> Buffer.t) -> unit
+         Buffer.Buffer.t -> (Import.Error.t option -> Buffer.Buffer.t) -> unit
        | `SecureConnection of TLSSocket.t -> unit
        | `TlsClientError of Import.Error.t -> TLSSocket.t -> unit
        ]
@@ -342,11 +351,11 @@ module Server : sig
 
   val addContext : t -> string -> CreateSecureContextOptions.t -> unit
 
-  val address : t -> Import.Address.t
+  val address : t -> Global.Address.t
 
   val close : t -> ?callback:(unit -> unit) -> unit -> t
 
-  val getTicketKeys : t -> Buffer.t
+  val getTicketKeys : t -> Buffer.Buffer.t
 
   val listen : t -> unit
 
@@ -356,7 +365,7 @@ module Server : sig
     -> unit
     -> unit
 
-  val setTicketKeys : t -> Buffer.t
+  val setTicketKeys : t -> Buffer.Buffer.t
 end
 
 module CreateServerOptions : sig
@@ -368,8 +377,8 @@ module CreateServerOptions : sig
 
   val create
     :  ?alpnprotocols:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `Strings of string list
          ]
     -> ?clientCertEngine:string
@@ -379,18 +388,18 @@ module CreateServerOptions : sig
     -> ?requestCert:bool
     -> ?sessionTimeout:int
     -> ?snicallback:(string -> (Error.t -> t option -> unit) -> unit)
-    -> ?ticketKeys:Buffer.t
-    -> ?pskCallback:(t -> string -> Buffer.t option)
+    -> ?ticketKeys:Buffer.Buffer.t
+    -> ?pskCallback:(t -> string -> Buffer.Buffer.t option)
     -> ?pskIdentityHint:string
     -> ?ca:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
     -> ?cert:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -398,8 +407,8 @@ module CreateServerOptions : sig
     -> ?ciphers:string
     -> ?clientCertEngine:string
     -> ?crl:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -407,8 +416,8 @@ module CreateServerOptions : sig
     -> ?ecdhCurve:string
     -> ?honorCipherOrder:bool
     -> ?key:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -418,15 +427,15 @@ module CreateServerOptions : sig
     -> ?minVersion:string
     -> ?passphrase:string
     -> ?pfx:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
-    -> ?ticketKeys:Buffer.t
+    -> ?ticketKeys:Buffer.Buffer.t
     -> ?sessionTimeout:int
     -> ?insecureHTTPParser:bool
     -> ?maxHeaderSize:int
@@ -449,8 +458,8 @@ module ConnectOptions : sig
     val t_to_js : t -> Ojs.t
 
     val create
-      :  ?buffer:Buffer.t
-      -> ?callback:(int -> Buffer.t -> unit)
+      :  ?buffer:Buffer.Buffer.t
+      -> ?callback:(int -> Buffer.Buffer.t -> unit)
       -> unit
       -> t
   end
@@ -463,29 +472,29 @@ module ConnectOptions : sig
     -> ?socket:Stream.Duplex.t
     -> ?allowHalfOpen:bool
     -> ?rejectUnauthorized:bool
-    -> ?pskCallback:(string -> Buffer.t)
+    -> ?pskCallback:(string -> Buffer.Buffer.t)
     -> ?alpnprotocols:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `Strings of string list
          | `Uint8Array of Import.Uint8Array.t
          ]
     -> ?servername:string
     -> ?checkServerIdentity:(string -> TLSSocket.Certificate.t -> unit)
-    -> ?session:Buffer.t
+    -> ?session:Buffer.Buffer.t
     -> ?minDHSize:int
     -> ?highWaterMark:int
     -> ?secureContext:t
     -> ?onread:t
     -> ?ca:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
     -> ?cert:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -493,8 +502,8 @@ module ConnectOptions : sig
     -> ?ciphers:string
     -> ?clientCertEngine:string
     -> ?crl:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -502,8 +511,8 @@ module ConnectOptions : sig
     -> ?ecdhCurve:string
     -> ?honorCipherOrder:bool
     -> ?key:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
@@ -513,15 +522,15 @@ module ConnectOptions : sig
     -> ?minVersion:string
     -> ?passphrase:string
     -> ?pfx:
-         [ `Buffer of Buffer.t
-         | `Buffers of Buffer.t list
+         [ `Buffer of Buffer.Buffer.t
+         | `Buffers of Buffer.Buffer.t list
          | `String of string
          | `Strings of string list
          ]
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
-    -> ?ticketKeys:Buffer.t
+    -> ?ticketKeys:Buffer.Buffer.t
     -> ?sessionTimeout:int
     -> ?localAddress:string
     -> ?localPort:int
@@ -539,7 +548,7 @@ end
 
 val checkServerIdentity
   :  string
-  -> Import.Certificate.t
+  -> Global.Certificate.t
   -> Import.Error.t option
 
 val connect : ConnectOptions.t -> ?callback:(unit -> unit) -> unit -> Server.t

@@ -26,7 +26,10 @@ module Agent : sig
 
   val create : ?options:Options.t -> unit -> t
 
-  val on : t -> [< `Keylog of Buffer.t -> Tls.TLSSocket.t -> unit ] -> unit
+  val on
+    :  t
+    -> [< `Keylog of Buffer.Buffer.t -> Tls.TLSSocket.t -> unit ]
+    -> unit
 end
 
 module Server : sig
@@ -70,7 +73,7 @@ module RequestOptions : sig
     -> ?setHost:bool
     -> ?socketPath:string
     -> ?timeout:int
-    -> ?signal:AbortSignal.t
+    -> ?signal:Global.AbortSignal.t
     -> unit
     -> t
 end

@@ -99,7 +99,7 @@ module X509Certificate : sig
 
   val publicKey : t -> KeyObject.t
 
-  val raw : t -> Buffer.t
+  val raw : t -> Buffer.Buffer.t
 
   val serialNumber : t -> string
 
@@ -109,7 +109,7 @@ module X509Certificate : sig
 
   val toJSON : t -> string
 
-  val toLegacyObject : t -> Certificate.t
+  val toLegacyObject : t -> Global.Certificate.t
 
   val toString : t -> string
 
@@ -120,6 +120,6 @@ module X509Certificate : sig
   val verify : t -> KeyObject.t -> string
 
   val create
-    :  buffer:([ `String of string | `Buffer of Buffer.t ][@js.union])
+    :  buffer:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> t
 end

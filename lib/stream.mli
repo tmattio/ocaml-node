@@ -31,7 +31,7 @@ module Readable : sig
   val t_to_js : t -> Ojs.t
 
   type chunk =
-    [ `Buffer of Buffer.t
+    [ `Buffer of Buffer.Buffer.t
     | `String of string
     ]
 
@@ -67,7 +67,7 @@ module Readable : sig
 
   val pipe : t -> Writable.t -> ?options:PipeOptions.t -> unit -> Writable.t
 
-  val read : t -> ?size:int -> unit -> Buffer.t or_undefined
+  val read : t -> ?size:int -> unit -> Buffer.Buffer.t or_undefined
 
   val readable : t -> bool
 
@@ -89,7 +89,7 @@ module Readable : sig
 
   val unpipe : t -> ?destination:Writable.t -> unit -> t
 
-  val unshift : t -> Buffer.t -> string -> unit
+  val unshift : t -> Buffer.Buffer.t -> string -> unit
 end
 
 module Duplex : sig
@@ -100,7 +100,7 @@ module Duplex : sig
   val t_to_js : t -> Ojs.t
 
   type chunk =
-    [ `Buffer of Buffer.t
+    [ `Buffer of Buffer.Buffer.t
     | `String of string
     ]
 
