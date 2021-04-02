@@ -24,7 +24,7 @@
    (>= 4.08.0))
   dune
   (gen_js_api
-   (>= 1.0.8))
+   (>= 1.0.7))
   js_of_ocaml
   js_of_ocaml-compiler
   ojs
