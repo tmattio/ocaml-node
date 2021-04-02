@@ -5,6 +5,9 @@ module Untyped : sig
 
   val t_of_js : Ojs.t -> t
 
+  val new_ : (resolve:(Ojs.t -> unit) -> reject:(Ojs.t -> unit) -> unit) -> t
+    [@@js.new "Promise"]
+
   [@@@js.stop]
 
   val return : Ojs.t -> t
@@ -65,6 +68,8 @@ val t_of_js : (Ojs.t -> 'a) -> Ojs.t -> 'a t
 
 type error = Ojs.t
 
+val make : (resolve:('a -> unit) -> reject:('a -> unit) -> unit) -> 'a t
+
 val fail : error -> 'a t
 
 val return : 'a -> 'a t
@@ -73,7 +78,9 @@ val bind : ?error:(error -> 'b t) -> 'a t -> ('a -> 'b t) -> 'b t
 
 val map : ('a -> 'b) -> 'a t -> 'b t
 
-val prod : 'a t -> 'b t -> ('a * 'b) t
+val both : 'a t -> 'b t -> ('a * 'b) t
+
+val all : 'a t list -> 'a list t
 
 val ( let+ ) : 'a t -> ('a -> 'b) -> 'b t
 
@@ -92,13 +99,19 @@ type 'a t = Untyped.t
 
 type error = Ojs.t
 
+let make (f : resolve:('a -> unit) -> reject:('e -> unit) -> unit) =
+  Untyped.new_ @@ fun ~resolve ~reject ->
+  let resolve_js value = resolve (Obj.magic value) in
+  let reject_js value = reject (Obj.magic value) in
+  f ~resolve:resolve_js ~reject:reject_js
+
 let fail error = Untyped.fail error
 
 let return x = Untyped.return (Obj.magic x)
 
 let bind ?error p f = Untyped.bind ?error p (fun x -> f (Obj.magic x))
 
-let prod p1 p2 =
+let both p1 p2 =
   bind
     (Untyped.all [ p1; p2 ])
     (fun ojs ->
@@ -108,6 +121,8 @@ let prod p1 p2 =
       | _ ->
         assert false)
 
+let all ps = List.map Untyped.t_of_js ps |> Untyped.all
+
 let map f p = bind p (fun x -> return (f x))
 
 let t_to_js f p = Untyped.t_to_js (map f p)
@@ -116,10 +131,10 @@ let t_of_js f p = map f (Untyped.t_of_js p)
 
 let ( let+ ) p f = map f p
 
-let ( and+ ) = prod
+let ( and+ ) = both
 
 let ( let* ) p f = bind p f
 
-let ( and* ) = prod
+let ( and* ) = both
 
 let catch p error = bind p ~error return]

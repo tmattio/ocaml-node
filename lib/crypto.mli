@@ -9,7 +9,7 @@ module KeyObject : sig
 
   val t_of_js : Ojs.t -> t
 
-  val from : Web_crypto.CryptoKey.t -> t [@@js.global]
+  val from : Web_crypto.CryptoKey.t -> t [@@js.global "KeyObject.from"]
 
   module AsymmetricKeyDetails : sig
     type t

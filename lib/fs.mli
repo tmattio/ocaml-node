@@ -283,8 +283,7 @@ val createReadStream
   -> Stream.Readable.t
   [@@js.global "createReadStream"]
 
-val accessSync : string -> ?mode:int -> unit -> unit
-  [@@js.global "accessSync"]
+val accessSync : string -> ?mode:int -> unit -> unit [@@js.global "accessSync"]
 
 module AppendFileOptions : sig
   type t
@@ -317,8 +316,7 @@ val lchmodSync : string -> int -> unit [@@js.global "lchmodSync"]
 
 val lchownSync : string -> int -> int -> unit [@@js.global "lchownSync"]
 
-val lutimesSync : string -> Date.t -> Date.t -> unit
-  [@@js.global "lutimesSync"]
+val lutimesSync : string -> Date.t -> Date.t -> unit [@@js.global "lutimesSync"]
 
 val linkSync : string -> string -> unit [@@js.global "linkSync"]
 
@@ -488,8 +486,7 @@ val truncateSync : string -> ?len:int -> unit -> unit
 
 val unlinkSync : string -> unit -> unit [@@js.global "unlinkSync"]
 
-val utimesSync : string -> Date.t -> Date.t -> unit
-  [@@js.global "utimesSync"]
+val utimesSync : string -> Date.t -> Date.t -> unit [@@js.global "utimesSync"]
 
 module WatchOptions : sig
   type t
@@ -548,17 +545,14 @@ module Promise : sig
 
   val chmod : string -> int -> Ojs.t Promise.t [@@js.global "chmod"]
 
-  val chown : string -> int -> int -> Ojs.t Promise.t
-    [@@js.global "chown"]
+  val chown : string -> int -> int -> Ojs.t Promise.t [@@js.global "chown"]
 
   val copyFile : string -> string -> ?mode:int -> unit -> Ojs.t Promise.t
     [@@js.global "copyFile"]
 
-  val lchmod : string -> int -> Ojs.t Promise.t
-    [@@js.global "lchmod"]
+  val lchmod : string -> int -> Ojs.t Promise.t [@@js.global "lchmod"]
 
-  val lchown : string -> int -> int -> Ojs.t Promise.t
-    [@@js.global "lchown"]
+  val lchown : string -> int -> int -> Ojs.t Promise.t [@@js.global "lchown"]
 
   val lutimes : string -> Date.t -> Date.t -> Ojs.t Promise.t
     [@@js.global "lutimes"]
@@ -600,8 +594,7 @@ module Promise : sig
   val realpath : string -> ?options:RealpathOptions.t -> unit -> Ojs.t Promise.t
     [@@js.global "realpath"]
 
-  val rename : string -> string -> Ojs.t Promise.t
-    [@@js.global "rename"]
+  val rename : string -> string -> Ojs.t Promise.t [@@js.global "rename"]
 
   val rmdir : string -> ?options:RmdirOptions.t -> unit -> Ojs.t Promise.t
     [@@js.global "rmdir"]
@@ -617,8 +610,7 @@ module Promise : sig
   val truncate : string -> ?len:int -> unit -> Ojs.t Promise.t
     [@@js.global "truncate"]
 
-  val unlink : string -> unit -> Ojs.t Promise.t
-    [@@js.global "unlink"]
+  val unlink : string -> unit -> Ojs.t Promise.t [@@js.global "unlink"]
 
   val utimes : string -> Date.t -> Date.t -> Ojs.t Promise.t
     [@@js.global "utimes"]

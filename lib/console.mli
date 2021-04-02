@@ -27,15 +27,13 @@ module Options : sig
     [@@js.builder]
 end
 
-val assert_ : bool -> (string list[@js.variadic]) -> unit
-  [@@js.global "assert"]
+val assert_ : bool -> (string list[@js.variadic]) -> unit [@@js.global "assert"]
 
 val clear : unit -> unit [@@js.global "clear"]
 
 val count : ?label:string -> unit -> unit [@@js.global "count"]
 
-val countReset : ?label:string -> unit -> unit
-  [@@js.global "countReset"]
+val countReset : ?label:string -> unit -> unit [@@js.global "countReset"]
 
 val debug : string -> unit [@@js.global "debug"]
 

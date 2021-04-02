@@ -139,10 +139,10 @@ val exec
   -> ?callback:(Error.t option -> string -> string -> unit)
   -> unit
   -> ChildProcess.t
-  [@@js.global ]
+  [@@js.global "exec"]
 
 val execSync : string -> ?options:ExecOptions.t -> unit -> string
-  [@@js.global ]
+  [@@js.global "execSync"]
 
 module ExecFileOptions : sig
   type t
@@ -175,7 +175,7 @@ val execFile
   -> ?callback:(Error.t option -> string -> string -> unit)
   -> unit
   -> ChildProcess.t
-  [@@js.global ]
+  [@@js.global "execFile"]
 
 module ForkOptions : sig
   type t
@@ -209,7 +209,7 @@ val fork
   -> ?options:ForkOptions.t
   -> unit
   -> ChildProcess.t
-  [@@js.global ]
+  [@@js.global "fork"]
 
 module SpawnOptions : sig
   type t
@@ -243,7 +243,7 @@ val spawn
   -> ?options:SpawnOptions.t
   -> unit
   -> ChildProcess.t
-  [@@js.global ]
+  [@@js.global "spawn"]
 
 module ExecFileSyncOptions : sig
   type t
@@ -276,7 +276,7 @@ val execFileSync
   -> ?options:ExecFileSyncOptions.t
   -> unit
   -> string
-  [@@js.global ]
+  [@@js.global "execFileSync"]
 
 module SpawnSyncOptions : sig
   type t
@@ -334,4 +334,4 @@ val spawnSync
   -> ?options:SpawnSyncOptions.t
   -> unit
   -> SpawnSyncReturn.t
-  [@@js.global ]
+  [@@js.global "spawnSync"]

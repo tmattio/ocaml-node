@@ -497,8 +497,7 @@ val platform : unit -> string [@@js.global "platform"]
 
 val release : unit -> string [@@js.global "release"]
 
-val setPriority : ?pid:int -> priority:int -> unit
-  [@@js.global "setPriority"]
+val setPriority : ?pid:int -> priority:int -> unit [@@js.global "setPriority"]
 
 val tmpdir : unit -> string [@@js.global "tmpdir"]
 

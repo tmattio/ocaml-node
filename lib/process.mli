@@ -2,25 +2,6 @@ open Js
 
 [@@@js.scope Import.process]
 
-module Env : sig
-  [@@@js.stop]
-
-  val get : string -> string option
-
-  val set : string -> string -> unit
-
-  [@@@js.start]
-
-  [@@@js.implem
-  val env : Ojs.t [@@js.global "env"]
-
-  let get k = [%js.to: string option] (Ojs.get_prop_ascii env k)
-
-  let set k v = Ojs.set_prop_ascii env k ([%js.of: string] v)]
-
-  val env : string Dict.t [@@js.global "env"]
-end
-
 module Argv : sig
   type t
 
@@ -28,10 +9,12 @@ module Argv : sig
 
   val t_of_js : Ojs.t -> t
 
-  val t : t [@@js.global "argv"]
-
   val shift : t -> unit [@@js.call]
 end
+
+val env : string Dict.t [@@js.global "env"]
+
+val argv : Argv.t [@@js.global "argv"]
 
 val cwd : unit -> string [@@js.global "cwd"]
 

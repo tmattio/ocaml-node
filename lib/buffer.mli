@@ -62,12 +62,11 @@ module Buffer : sig
     -> ?encoding:string
     -> unit
     -> unit
-    [@@js.global]
+    [@@js.global "Buffer.alloc"]
 
-  val allocUnsafe : int -> unit [@@js.global]
+  val allocUnsafe : int -> unit [@@js.global "Buffer.allocUnsafe"]
 
-  val allocUnsafeSlow : int -> unit
-    [@@js.global]
+  val allocUnsafeSlow : int -> unit [@@js.global "Buffer.allocUnsafeSlow"]
 
   val byteLength
     :  ([ `String of string | `Buffer of t | `ArrayBuffer of ArrayBuffer.t ]
@@ -75,13 +74,13 @@ module Buffer : sig
     -> ?encoding:string
     -> unit
     -> int
-    [@@js.global]
+    [@@js.global "Buffer.byteLength"]
 
-  val compare : t -> t -> int [@@js.global]
+  val compare : t -> t -> int [@@js.global "Buffer.compare"]
 
-  val concat : t list -> t [@@js.global]
+  val concat : t list -> t [@@js.global "Buffer.concat"]
 
-  val from_array : int list -> t [@@js.global]
+  val from_array : int list -> t [@@js.global "Buffer.from"]
 
   val from_array_buffer
     :  ArrayBuffer.t
@@ -89,18 +88,18 @@ module Buffer : sig
     -> ?length:int
     -> unit
     -> t
-    [@@js.global]
+    [@@js.global "Buffer.from"]
 
-  val from_buffer : t -> t [@@js.global]
+  val from_buffer : t -> t [@@js.global "Buffer.from"]
 
   val from_string : string -> ?encoding:string -> unit -> t
-    [@@js.global]
+    [@@js.global "Buffer.from"]
 
-  val isBuffer : Ojs.t -> bool [@@js.global]
+  val isBuffer : Ojs.t -> bool [@@js.global "Buffer.isBuffer"]
 
-  val isEncoding : string -> bool [@@js.global]
+  val isEncoding : string -> bool [@@js.global "Buffer.isEncoding"]
 
-  val poolSize : int [@@js.global]
+  val poolSize : int [@@js.global "Buffer.poolSize"]
 
   (* TODO: How to bind index operators? *)
   (* val index: t -> int -> int [@@js.call] *)

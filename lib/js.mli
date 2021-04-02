@@ -52,7 +52,10 @@ end
 [@@@js.stop]
 
 module Dict : sig
-  include Map.S with type key = string
+  include module type of struct
+      include Map.Make (String)
+    end
+    with type key = string
 
   val t_to_js : ('a -> Ojs.t) -> 'a t -> Ojs.t
 
