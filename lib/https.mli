@@ -1,14 +1,18 @@
-open Import
+open Js
+
+[@@@js.scope Import.https]
 
 module Agent : sig
-  include module type of Http.Agent
+  include module type of struct
+    include Http.Agent
+  end
 
   module Options : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?keepAlive:bool
@@ -22,18 +26,32 @@ module Agent : sig
       -> ?servername:string
       -> unit
       -> t
+      [@@js.builder]
   end
 
-  val create : ?options:Options.t -> unit -> t
+  val create : ?options:Options.t -> unit -> t [@@js.builder]
+
+  [@@@js.stop]
 
   val on
     :  t
     -> [< `Keylog of Buffer.Buffer.t -> Tls.TLSSocket.t -> unit ]
     -> unit
+
+  [@@@js.start]
+
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
+
+  let on t = function
+    | `Keylog f ->
+      on t "keylog" @@ [%js.of: Buffer.Buffer.t -> Tls.TLSSocket.t -> unit] f]
 end
 
 module Server : sig
-  include module type of Http.Server
+  include module type of struct
+    include Http.Server
+  end
 end
 
 val createServer
@@ -41,13 +59,14 @@ val createServer
   -> ?requestListener:(Http.IncomingMessage.t -> Http.ServerResponse.t -> unit)
   -> unit
   -> unit
+  [@@js.global "http.createServer"]
 
 module RequestOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?agent:Agent.t
@@ -76,6 +95,7 @@ module RequestOptions : sig
     -> ?signal:Global.AbortSignal.t
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val get
@@ -84,8 +104,9 @@ val get
   -> ?callback:(Http.IncomingMessage.t -> unit)
   -> unit
   -> Http.ClientRequest.t
+  [@@js.global "get"]
 
-val globalAgent : Agent.t
+val globalAgent : Agent.t [@@js.global "globalAgent"]
 
 val request
   :  string
@@ -93,3 +114,4 @@ val request
   -> ?callback:(Http.IncomingMessage.t -> unit)
   -> unit
   -> Http.ClientRequest.t
+  [@@js.global "request"]

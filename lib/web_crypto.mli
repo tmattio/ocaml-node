@@ -1,383 +1,423 @@
-open Import
+open Js
+
+[@@@js.scope Import.web_crypto]
 
 module AesCbcParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val iv : t -> Buffer.Buffer.t
+  val t_of_js : Ojs.t -> t
 
-  val name : t -> string
+  val iv
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module AesCtrParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val counter : t -> Buffer.Buffer.t
+  val t_of_js : Ojs.t -> t
 
-  val length : t -> int
+  val counter
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
 
-  val name : t -> string
+  val length : t -> int [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module AesGcmParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val additionalData : t -> Buffer.Buffer.t or_undefined
+  val t_of_js : Ojs.t -> t
 
-  val iv : t -> Buffer.Buffer.t
+  val additionalData
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t option
+    [@@js.get]
 
-  val name : t -> string
+  val iv
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
 
-  val tagLength : t -> int
+  val name : t -> string [@@js.get]
+
+  val tagLength : t -> int [@@js.get]
 end
 
 module AesImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module AesKeyGenParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val length : t -> int
+  val t_of_js : Ojs.t -> t
 
-  val name : t -> string
+  val length : t -> int [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module AesKwParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module EcdsaParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val name : t -> string
+  val hash : t -> string [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module EcKeyGenParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val namedCurve : t -> string
+  val name : t -> string [@@js.get]
+
+  val namedCurve : t -> string [@@js.get]
 end
 
 module EcKeyImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val namedCurve : t -> string
+  val name : t -> string [@@js.get]
+
+  val namedCurve : t -> string [@@js.get]
 end
 
 module HkdfParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val info : t -> Buffer.Buffer.t
+  val hash : t -> string [@@js.get]
 
-  val name : t -> string
+  val info
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
 
-  val salt : t -> Buffer.Buffer.t
+  val name : t -> string [@@js.get]
+
+  val salt
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
 end
 
 module HmacImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val length : t -> int
+  val hash : t -> string [@@js.get]
 
-  val name : t -> string
+  val length : t -> int [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module HmacKeyGenParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val length : t -> int
+  val hash : t -> string [@@js.get]
 
-  val name : t -> string
+  val length : t -> int [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module HmacParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module Pbkdf2ImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module Pbkdf2Params : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val iterations : t -> int
+  val hash : t -> string [@@js.get]
 
-  val name : t -> string
+  val iterations : t -> int [@@js.get]
 
-  val salt : t -> Buffer.Buffer.t
+  val name : t -> string [@@js.get]
+
+  val salt
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
 end
 
 module RsaHashedImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val name : t -> string
+  val hash : t -> string [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module RsaHashedKeyGenParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val modulusLength : t -> int
+  val hash : t -> string [@@js.get]
 
-  val name : t -> string
+  val modulusLength : t -> int [@@js.get]
 
-  val publicExponent : t -> Uint8Array.t
+  val name : t -> string [@@js.get]
+
+  val publicExponent : t -> Uint8Array.t [@@js.get]
 end
 
 module RsaOaepParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val label : t -> Buffer.Buffer.t
+  val t_of_js : Ojs.t -> t
 
-  val name : t -> string
+  val label
+    :  t
+    -> (* <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module RsaPssParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val saltLength : t -> int
+  val name : t -> string [@@js.get]
+
+  val saltLength : t -> int [@@js.get]
 end
 
 module RsaSignParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module NodeDhImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module NodeDhKeyGenParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val generator : t -> int
+  val t_of_js : Ojs.t -> t
 
-  val group : t -> string
+  val generator : t -> int [@@js.get]
 
-  val prime : t -> Buffer.Buffer.t
+  val group : t -> string [@@js.get]
 
-  val primeLength : t -> int
+  val prime : t -> Buffer.Buffer.t [@@js.get]
+
+  val primeLength : t -> int [@@js.get]
 end
 
 module NodeDsaImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val hash : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val name : t -> string
+  val hash : t -> string [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module NodeDsaKeyGenParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val divisorLength : t -> int
+  val t_of_js : Ojs.t -> t
 
-  val hash : t -> string
+  val divisorLength : t -> int [@@js.get]
 
-  val modulusLength : t -> int
+  val hash : t -> string [@@js.get]
 
-  val name : t -> string
+  val modulusLength : t -> int [@@js.get]
+
+  val name : t -> string [@@js.get]
 end
 
 module NodeDsaSignParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module NodeEdKeyGenParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val namedCurve : t -> string
+  val name : t -> string [@@js.get]
+
+  val namedCurve : t -> string [@@js.get]
 end
 
 module NodeEdKeyImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val namedCurve : t -> string
+  val name : t -> string [@@js.get]
 
-  val public : t -> bool
+  val namedCurve : t -> string [@@js.get]
+
+  val public : t -> bool [@@js.get]
 end
 
 module NodeScryptImportParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
+
+  val name : t -> string [@@js.get]
 end
 
 module NodeScryptParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val encoding : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val maxmem : t -> int
+  val encoding : t -> string [@@js.get]
 
-  val n : t -> int
+  val maxmem : t -> int [@@js.get]
 
-  val p : t -> int
+  val n : t -> int [@@js.get "n"]
 
-  val r : t -> int
+  val p : t -> int [@@js.get]
 
-  val salt : t -> Buffer.Buffer.t
+  val r : t -> int [@@js.get]
+
+  val salt
+    :  t
+    -> (* <string> | <ArrayBuffer> | <TypedArray> | <DataView> | <Buffer> *)
+       Buffer.Buffer.t
+    [@@js.get]
 end
 
 module CryptoKey : sig
   type t
 
+  val t_to_js : t -> Ojs.t
+
   val t_of_js : Ojs.t -> t
 
-  val t_to_js : t -> Ojs.t
+  [@@@js.stop]
 
   type algorithm =
     | AesKeyGen of AesKeyGenParams.t
@@ -387,43 +427,74 @@ module CryptoKey : sig
     | NodeDsaKeyGen of NodeDsaKeyGenParams.t
     | NodeDhKeyGen of NodeDhKeyGenParams.t
 
-  val algorithm : t -> algorithm
+  val algorithm_of_js : Ojs.t -> algorithm
 
-  val extractable : t -> bool
+  [@@@js.start]
 
-  val type_ : t -> string
+  [@@@js.implem
+  type algorithm =
+    | AesKeyGen of AesKeyGenParams.t
+    | RsaHashedKeyGen of RsaHashedKeyGenParams.t
+    | EcKeyGen of EcKeyGenParams.t
+    | HmacKeyGen of HmacKeyGenParams.t
+    | NodeDsaKeyGen of NodeDsaKeyGenParams.t
+    | NodeDhKeyGen of NodeDhKeyGenParams.t
 
-  val usages : t -> string list
+  let algorithm_of_js js_val =
+    (* TODO: not sure about this, need to test *)
+    match Ojs.type_of js_val with
+    | "AesKeyGenParams" ->
+      AesKeyGen ([%js.to: AesKeyGenParams.t] js_val)
+    | "RsaHashedKeyGenParams" ->
+      RsaHashedKeyGen ([%js.to: RsaHashedKeyGenParams.t] js_val)
+    | "EcKeyGenParams" ->
+      EcKeyGen ([%js.to: EcKeyGenParams.t] js_val)
+    | "HmacKeyGenParams" ->
+      HmacKeyGen ([%js.to: HmacKeyGenParams.t] js_val)
+    | "NodeDsaKeyGenParams" ->
+      NodeDsaKeyGen ([%js.to: NodeDsaKeyGenParams.t] js_val)
+    | "NodeDhKeyGenParams" ->
+      NodeDhKeyGen ([%js.to: NodeDhKeyGenParams.t] js_val)
+    | _ ->
+      assert false]
+
+  val algorithm : t -> algorithm [@@js.get]
+
+  val extractable : t -> bool [@@js.get]
+
+  val type_ : t -> string [@@js.get]
+
+  val usages : t -> string list [@@js.get]
 end
 
 module NodeDhDeriveBitsParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val public : t -> CryptoKey.t
+  val t_of_js : Ojs.t -> t
+
+  val public : t -> CryptoKey.t [@@js.get]
 end
 
 module EcdhKeyDeriveParams : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val public : t -> CryptoKey.t
+  val name : t -> string [@@js.get]
+
+  val public : t -> CryptoKey.t [@@js.get]
 end
 
 module SubtleCrypto : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val decrypt
     :  t
@@ -436,6 +507,7 @@ module SubtleCrypto : sig
     -> CryptoKey.t
     -> Buffer.Buffer.t
     -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val deriveBits
     :  t
@@ -449,6 +521,7 @@ module SubtleCrypto : sig
     -> CryptoKey.t
     -> int
     -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val deriveKey
     :  t
@@ -465,8 +538,10 @@ module SubtleCrypto : sig
     -> bool
     -> string list
     -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val digest : t -> string -> Buffer.Buffer.t -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val encrypt
     :  t
@@ -478,8 +553,10 @@ module SubtleCrypto : sig
        [@js.union])
     -> CryptoKey.t
     -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val exportKey : t -> string -> CryptoKey.t -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val generateKey
     :  t
@@ -495,6 +572,7 @@ module SubtleCrypto : sig
     -> bool
     -> string
     -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val importKey
     :  t
@@ -514,6 +592,7 @@ module SubtleCrypto : sig
     -> bool
     -> string list
     -> CryptoKey.t Promise.t
+    [@@js.call]
 
   val sign
     :  t
@@ -527,6 +606,7 @@ module SubtleCrypto : sig
     -> CryptoKey.t
     -> Buffer.Buffer.t
     -> ArrayBuffer.t Promise.t
+    [@@js.call]
 
   val unwrapKey
     :  t
@@ -549,6 +629,7 @@ module SubtleCrypto : sig
     -> bool
     -> string list
     -> CryptoKey.t Promise.t
+    [@@js.call]
 
   val verify
     :  t
@@ -563,6 +644,7 @@ module SubtleCrypto : sig
     -> Buffer.Buffer.t
     -> Buffer.Buffer.t
     -> bool Promise.t
+    [@@js.call]
 
   val wrapKey
     :  t
@@ -577,28 +659,29 @@ module SubtleCrypto : sig
         ]
        [@js.union])
     -> ArrayBuffer.t Promise.t
+    [@@js.call]
 end
 
 module CryptoKeyPair : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val privateKey : t -> CryptoKey.t
+  val t_of_js : Ojs.t -> t
 
-  val publicKey : t -> CryptoKey.t
+  val privateKey : t -> CryptoKey.t [@@js.get]
+
+  val publicKey : t -> CryptoKey.t [@@js.get]
 end
 
 module Crypto : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val subtle : t -> SubtleCrypto.t
+  val t_of_js : Ojs.t -> t
 
-  val getRandomValues : t -> Buffer.Buffer.t -> Buffer.Buffer.t
+  val subtle : t -> SubtleCrypto.t [@@js.get]
+
+  val getRandomValues : t -> Buffer.Buffer.t -> Buffer.Buffer.t [@@js.call]
 end

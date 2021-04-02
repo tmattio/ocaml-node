@@ -1,19 +1,23 @@
-open Import
+open Js
+
+[@@@js.scope Import.tls]
 
 module SecureContext : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 end
 
 module TLSSocket : sig
   type t
 
+  val t_to_js : t -> Ojs.t
+
   val t_of_js : Ojs.t -> t
 
-  val t_to_js : t -> Ojs.t
+  [@@@js.stop]
 
   val on
     :  t
@@ -24,47 +28,64 @@ module TLSSocket : sig
        ]
     -> unit
 
-  module Certificate = Global.Certificate
+  [@@@js.start]
+
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
+
+  let on t = function
+    | `Keylog f ->
+      on t "keylog" @@ [%js.of: Buffer.Buffer.t -> unit] f
+    | `OCSPResponse f ->
+      on t "OCSPResponse" @@ [%js.of: Buffer.Buffer.t -> unit] f
+    | `SecureConnect f ->
+      on t "secureConnect" @@ [%js.of: unit -> unit] f
+    | `Session f ->
+      on t "session" @@ [%js.of: Buffer.Buffer.t -> unit] f]
+
+  module Certificate : sig
+    include module type of Global.Certificate
+  end
 
   module Cipher : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val name : t -> string
+    val t_of_js : Ojs.t -> t
 
-    val standardName : t -> string
+    val name : t -> string [@@js.get]
 
-    val version : t -> string
+    val standardName : t -> string [@@js.get]
+
+    val version : t -> string [@@js.get]
   end
 
   module EphemeralKeyInfo : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val type_ : t -> string
+    val t_of_js : Ojs.t -> t
 
-    val name : t -> string
+    val type_ : t -> string [@@js.get "type"]
 
-    val size : t -> string
+    val name : t -> string [@@js.get]
+
+    val size : t -> string [@@js.get]
   end
 
-  val address : t -> Global.Address.t
+  val address : t -> Global.Address.t [@@js.get]
 
-  val authorizationError : t -> Error.t
+  val authorizationError : t -> Error.t [@@js.get]
 
-  val authorized : t -> bool
+  val authorized : t -> bool [@@js.get]
 
-  val disableRenegotiation : t -> unit
+  val disableRenegotiation : t -> unit [@@js.call]
 
-  val enableTrace : t -> unit
+  val enableTrace : t -> unit [@@js.call]
 
-  val encrypted : t -> bool
+  val encrypted : t -> bool [@@js.get]
 
   val exportKeyingMaterial
     :  t
@@ -72,66 +93,71 @@ module TLSSocket : sig
     -> string
     -> Buffer.Buffer.t
     -> Buffer.Buffer.t
+    [@@js.call]
 
-  val getCertificate : t -> Certificate.t
+  val getCertificate : t -> Global.Certificate.t [@@js.get]
 
-  val getCipher : t -> Cipher.t
+  val getCipher : t -> Cipher.t [@@js.get]
 
-  val getEphemeralKeyInfo : t -> EphemeralKeyInfo.t
+  val getEphemeralKeyInfo : t -> EphemeralKeyInfo.t [@@js.get]
 
-  val getFinished : t -> Buffer.Buffer.t or_undefined
+  val getFinished : t -> Buffer.Buffer.t option [@@js.get]
 
-  val getPeerCertificate : t -> ?detailed:bool -> unit -> Certificate.t
+  val getPeerCertificate : t -> ?detailed:bool -> unit -> Global.Certificate.t
+    [@@js.call]
 
-  val getPeerFinished : t -> Buffer.Buffer.t or_undefined
+  val getPeerFinished : t -> Buffer.Buffer.t option [@@js.get]
 
-  val getPeerX509Certificate : t -> Crypto.X509Certificate.t
+  val getPeerX509Certificate : t -> Crypto.X509Certificate.t [@@js.get]
 
-  val getProtocol : t -> string or_undefined
+  val getProtocol : t -> string option [@@js.get]
 
-  val getSession : t -> Buffer.Buffer.t
+  val getSession : t -> Buffer.Buffer.t [@@js.get]
 
   (* TODO: Not sure of the return type here *)
-  val getSharedSigalgs : t -> string list
+  val getSharedSigalgs : t -> string list [@@js.get]
 
-  val getTLSTicket : t -> Buffer.Buffer.t
+  val getTLSTicket : t -> Buffer.Buffer.t [@@js.get]
 
-  val getX509Certificate : t -> Crypto.X509Certificate.t
+  val getX509Certificate : t -> Crypto.X509Certificate.t [@@js.get]
 
-  val isSessionReused : t -> bool
+  val isSessionReused : t -> bool [@@js.get]
 
-  val localAddress : t -> string
+  val localAddress : t -> string [@@js.get]
 
-  val localPort : t -> int
+  val localPort : t -> int [@@js.get]
 
-  val remoteAddress : t -> string
+  val remoteAddress : t -> string [@@js.get]
 
-  val remoteFamily : t -> string
+  val remoteFamily : t -> string [@@js.get]
 
-  val remotePort : t -> int
+  val remotePort : t -> int [@@js.get]
 
   module RenegotiateOptions : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val rejectUnauthorized : t -> bool
+    val t_of_js : Ojs.t -> t
 
-    val requestCert : t -> Certificate.t
+    val rejectUnauthorized : t -> bool [@@js.get]
+
+    (* TODO: Not sure about the return type here, maybe it's a
+       Crypto.X509Certificate.t *)
+    val requestCert : t -> Global.Certificate.t [@@js.get]
   end
 
-  val renegotiate : t -> ?options:t -> (unit -> unit) -> unit
+  val renegotiate : t -> ?options:RenegotiateOptions.t -> (unit -> unit) -> unit
+    [@@js.call]
 
-  val setMaxSendFragment : t -> int -> bool
+  val setMaxSendFragment : t -> int -> bool [@@js.call]
 
   module Options : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?enableTrace:bool
@@ -140,55 +166,62 @@ module TLSSocket : sig
       -> ?requestCert:bool
       -> ?rejectUnauthorized:bool
       -> ?alpnprotocols:
-           [ `Buffer of Buffer.Buffer.t
-           | `Buffers of Buffer.Buffer.t list
-           | `Strings of string list
-           ]
-      -> ?snicallback:(string -> (Error.t -> t option -> unit) -> unit)
+           ([ `Strings of string list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
+            ]
+           [@js.union])
+      -> ?snicallback:
+           (string -> (Error.t -> SecureContext.t option -> unit) -> unit)
       -> ?session:Buffer.Buffer.t
       -> ?requestOCSP:bool
-      -> ?secureContext:t
+      -> ?secureContext:SecureContext.t
       -> ?ca:
-           [ `Buffer of Buffer.Buffer.t
-           | `Buffers of Buffer.Buffer.t list
-           | `String of string
-           | `Strings of string list
-           ]
+           ([ `String of string
+            | `Strings of string list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
+            ]
+           [@js.union])
       -> ?cert:
-           [ `Buffer of Buffer.Buffer.t
-           | `Buffers of Buffer.Buffer.t list
-           | `String of string
-           | `Strings of string list
-           ]
+           ([ `String of string
+            | `Strings of string list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
+            ]
+           [@js.union])
       -> ?sigalgs:string
       -> ?ciphers:string
       -> ?clientCertEngine:string
       -> ?crl:
-           [ `Buffer of Buffer.Buffer.t
-           | `Buffers of Buffer.Buffer.t list
-           | `String of string
-           | `Strings of string list
-           ]
+           ([ `String of string
+            | `Strings of string list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
+            ]
+           [@js.union])
       -> ?dhparam:string
       -> ?ecdhCurve:string
       -> ?honorCipherOrder:bool
       -> ?key:
-           [ `Buffer of Buffer.Buffer.t
-           | `Buffers of Buffer.Buffer.t list
-           | `String of string
-           | `Strings of string list
-           ]
+           ([ `String of string
+            | `Strings of string list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
+            ]
+           [@js.union])
       -> ?privateKeyEngine:string
       -> ?privateKeyIdentifier:string
       -> ?maxVersion:string
       -> ?minVersion:string
       -> ?passphrase:string
       -> ?pfx:
-           [ `Buffer of Buffer.Buffer.t
-           | `Buffers of Buffer.Buffer.t list
-           | `String of string
-           | `Strings of string list
-           ]
+           ([ `String of string
+            | `Strings of string list
+            | `Buffer of Buffer.Buffer.t
+            | `Buffers of Buffer.Buffer.t list
+            ]
+           [@js.union])
       -> ?secureOptions:int
       -> ?secureProtocol:string
       -> ?sessionIdContext:string
@@ -196,106 +229,139 @@ module TLSSocket : sig
       -> ?sessionTimeout:int
       -> unit
       -> t
+      [@@js.builder]
   end
 
   val create
-    :  socket:[ `Socket of Net.Socket.t | `Stream of Stream.Duplex.t ]
-    -> ?options:t
+    :  socket:
+         ([ `Socket of Net.Socket.t | `Stream of Stream.Duplex.t ][@js.union])
+    -> ?options:Options.t
     -> unit
     -> t
+    [@@js.builder]
 end
 
 module CreateSecureContextOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val ca : t -> Buffer.Buffer.t or_undefined
+  val t_of_js : Ojs.t -> t
 
-  val cert : t -> Buffer.Buffer.t or_undefined
+  val ca
+    :  t
+    -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t option
+    [@@js.get]
 
-  val sigalgs : t -> string or_undefined
+  val cert
+    :  t
+    -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t option
+    [@@js.get]
 
-  val ciphers : t -> string or_undefined
+  val sigalgs : t -> string option [@@js.get]
 
-  val clientCertEngine : t -> string or_undefined
+  val ciphers : t -> string option [@@js.get]
 
-  val crl : t -> Buffer.Buffer.t or_undefined
+  val clientCertEngine : t -> string option [@@js.get]
 
-  val dhparam : t -> string or_undefined
+  val crl
+    :  t
+    -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t option
+    [@@js.get]
 
-  val ecdhCurve : t -> string or_undefined
+  val dhparam : t -> string option [@@js.get]
 
-  val honorCipherOrder : t -> bool or_undefined
+  val ecdhCurve : t -> string option [@@js.get]
 
-  val key : t -> Buffer.Buffer.t or_undefined
+  val honorCipherOrder : t -> bool option [@@js.get]
 
-  val privateKeyEngine : t -> string or_undefined
+  val key
+    :  t
+    -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t option
+    [@@js.get]
 
-  val privateKeyIdentifier : t -> string or_undefined
+  val privateKeyEngine : t -> string option [@@js.get]
 
-  val maxVersion : t -> string or_undefined
+  val privateKeyIdentifier : t -> string option [@@js.get]
 
-  val minVersion : t -> string or_undefined
+  val maxVersion : t -> string option [@@js.get]
 
-  val passphrase : t -> string or_undefined
+  val minVersion : t -> string option [@@js.get]
 
-  val pfx : t -> Buffer.Buffer.t or_undefined
+  val passphrase : t -> string option [@@js.get]
 
-  val secureOptions : t -> int or_undefined
+  val pfx
+    :  t
+    -> (* TODO: [ `String of string | `Strings of string list | `Buffer of
+          Buffer.Buffer.t | `Buffers of Buffer.Buffer.t list] *)
+       Buffer.Buffer.t option
+    [@@js.get]
 
-  val secureProtocol : t -> string or_undefined
+  val secureOptions : t -> int option [@@js.get]
 
-  val sessionIdContext : t -> string or_undefined
+  val secureProtocol : t -> string option [@@js.get]
 
-  val ticketKeys : t -> Buffer.Buffer.t or_undefined
+  val sessionIdContext : t -> string option [@@js.get]
 
-  val sessionTimeout : t -> int or_undefined
+  val ticketKeys : t -> Buffer.Buffer.t option [@@js.get]
+
+  val sessionTimeout : t -> int option [@@js.get]
 
   val create
     :  ?ca:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?cert:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?sigalgs:string
     -> ?ciphers:string
     -> ?clientCertEngine:string
     -> ?crl:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?dhparam:string
     -> ?ecdhCurve:string
     -> ?honorCipherOrder:bool
     -> ?key:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?privateKeyEngine:string
     -> ?privateKeyIdentifier:string
     -> ?maxVersion:string
     -> ?minVersion:string
     -> ?passphrase:string
     -> ?pfx:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
@@ -303,36 +369,21 @@ module CreateSecureContextOptions : sig
     -> ?sessionTimeout:int
     -> unit
     -> t
+    [@@js.builder]
 end
 
 module Server : sig
-  type t = Net.Server.t
+  include module type of struct
+    include Net.Server
+  end
 
-  val t_of_js : Ojs.t -> t
-
-  val t_to_js : t -> Ojs.t
-
-  val getConnections : t -> (unit -> unit) -> t
-
-  module ListenOptions = Net.Server.ListenOptions
-
-  val listening : t -> bool
-
-  val maxConnections : t -> int
-
-  val ref : t -> t
-
-  val unref : t -> t
-
-  module Options = Net.Server.Options
-
-  val create : ?options:t -> ?connectionListener:(t -> unit) -> unit -> t
+  [@@@js.stop]
 
   val on
     :  t
     -> [< `Close of unit -> unit
        | `Connection of Stream.Duplex.t -> unit
-       | `Error of Import.Error.t -> unit
+       | `Error of Js.Error.t -> unit
        | `Keylog of Buffer.Buffer.t -> TLSSocket.t -> unit
        | `Listening of unit -> unit
        | `NewSession of
@@ -340,98 +391,145 @@ module Server : sig
        | `OCSPRequest of
          Buffer.Buffer.t
          -> Buffer.Buffer.t
-         -> (Import.Error.t option -> Buffer.Buffer.t)
+         -> (Js.Error.t option -> Buffer.Buffer.t)
          -> unit
        | `ResumeSession of
-         Buffer.Buffer.t -> (Import.Error.t option -> Buffer.Buffer.t) -> unit
+         Buffer.Buffer.t -> (Js.Error.t option -> Buffer.Buffer.t) -> unit
        | `SecureConnection of TLSSocket.t -> unit
-       | `TlsClientError of Import.Error.t -> TLSSocket.t -> unit
+       | `TlsClientError of Js.Error.t -> TLSSocket.t -> unit
        ]
     -> unit
 
+  [@@@js.start]
+
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
+
+  let on t = function
+    | `Connection f ->
+      on t "connection" @@ [%js.of: Stream.Duplex.t -> unit] f
+    | `Keylog f ->
+      on t "keylog" @@ [%js.of: Buffer.Buffer.t -> TLSSocket.t -> unit] f
+    | `NewSession f ->
+      on t "newSession"
+      @@ [%js.of: Buffer.Buffer.t -> Buffer.Buffer.t -> (unit -> unit) -> unit]
+           f
+    | `OCSPRequest f ->
+      on t "OCSPRequest"
+      @@ [%js.of:
+           Buffer.Buffer.t
+           -> Buffer.Buffer.t
+           -> (Error.t option -> Buffer.Buffer.t)
+           -> unit]
+           f
+    | `ResumeSession f ->
+      on t "resumeSession"
+      @@ [%js.of:
+           Buffer.Buffer.t -> (Error.t option -> Buffer.Buffer.t) -> unit]
+           f
+    | `SecureConnection f ->
+      on t "secureConnection" @@ [%js.of: TLSSocket.t -> unit] f
+    | `TlsClientError f ->
+      on t "tlsClientError" @@ [%js.of: Error.t -> TLSSocket.t -> unit] f
+    | `Close f ->
+      on t "close" @@ [%js.of: unit -> unit] f
+    | `Error f ->
+      on t "error" @@ [%js.of: Error.t -> unit] f
+    | `Listening f ->
+      on t "listening" @@ [%js.of: unit -> unit] f]
+
   val addContext : t -> string -> CreateSecureContextOptions.t -> unit
+    [@@js.call]
 
-  val address : t -> Global.Address.t
+  val address : t -> Global.Address.t [@@js.get]
 
-  val close : t -> ?callback:(unit -> unit) -> unit -> t
+  val close : t -> ?callback:(unit -> unit) -> unit -> t [@@js.call]
 
-  val getTicketKeys : t -> Buffer.Buffer.t
+  val getTicketKeys : t -> Buffer.Buffer.t [@@js.get]
 
-  val listen : t -> unit
+  val listen : t -> unit [@@js.call]
 
   val setSecureContext
     :  t
     -> ?options:CreateSecureContextOptions.t
     -> unit
     -> unit
+    [@@js.call]
 
-  val setTicketKeys : t -> Buffer.Buffer.t
+  val setTicketKeys : t -> Buffer.Buffer.t [@@js.get]
 end
 
 module CreateServerOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?alpnprotocols:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `Strings of string list
-         ]
+         ([ `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?clientCertEngine:string
     -> ?enableTrace:bool
     -> ?handshakeTimeout:int
     -> ?rejectUnauthorized:bool
     -> ?requestCert:bool
     -> ?sessionTimeout:int
-    -> ?snicallback:(string -> (Error.t -> t option -> unit) -> unit)
+    -> ?snicallback:
+         (string -> (Error.t -> SecureContext.t option -> unit) -> unit)
     -> ?ticketKeys:Buffer.Buffer.t
-    -> ?pskCallback:(t -> string -> Buffer.Buffer.t option)
+    -> ?pskCallback:(TLSSocket.t -> string -> Buffer.Buffer.t option)
     -> ?pskIdentityHint:string
     -> ?ca:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?cert:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?sigalgs:string
     -> ?ciphers:string
     -> ?clientCertEngine:string
     -> ?crl:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?dhparam:string
     -> ?ecdhCurve:string
     -> ?honorCipherOrder:bool
     -> ?key:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?privateKeyEngine:string
     -> ?privateKeyIdentifier:string
     -> ?maxVersion:string
     -> ?minVersion:string
     -> ?passphrase:string
     -> ?pfx:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
@@ -441,27 +539,29 @@ module CreateServerOptions : sig
     -> ?maxHeaderSize:int
     -> unit
     -> t
+    [@@js.builder]
 end
 
 module ConnectOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   module OnReadOptions : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?buffer:Buffer.Buffer.t
       -> ?callback:(int -> Buffer.Buffer.t -> unit)
       -> unit
       -> t
+      [@@js.builder]
   end
 
   val create
@@ -474,59 +574,65 @@ module ConnectOptions : sig
     -> ?rejectUnauthorized:bool
     -> ?pskCallback:(string -> Buffer.Buffer.t)
     -> ?alpnprotocols:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `Strings of string list
-         | `Uint8Array of Import.Uint8Array.t
-         ]
+         ([ `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          | `Uint8Array of Uint8Array.t
+          ]
+         [@js.union])
     -> ?servername:string
-    -> ?checkServerIdentity:(string -> TLSSocket.Certificate.t -> unit)
+    -> ?checkServerIdentity:(string -> Global.Certificate.t -> unit)
     -> ?session:Buffer.Buffer.t
     -> ?minDHSize:int
     -> ?highWaterMark:int
-    -> ?secureContext:t
-    -> ?onread:t
+    -> ?secureContext:SecureContext.t
+    -> ?onread:OnReadOptions.t
     -> ?ca:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?cert:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?sigalgs:string
     -> ?ciphers:string
     -> ?clientCertEngine:string
     -> ?crl:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?dhparam:string
     -> ?ecdhCurve:string
     -> ?honorCipherOrder:bool
     -> ?key:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?privateKeyEngine:string
     -> ?privateKeyIdentifier:string
     -> ?maxVersion:string
     -> ?minVersion:string
     -> ?passphrase:string
     -> ?pfx:
-         [ `Buffer of Buffer.Buffer.t
-         | `Buffers of Buffer.Buffer.t list
-         | `String of string
-         | `Strings of string list
-         ]
+         ([ `String of string
+          | `Strings of string list
+          | `Buffer of Buffer.Buffer.t
+          | `Buffers of Buffer.Buffer.t list
+          ]
+         [@js.union])
     -> ?secureOptions:int
     -> ?secureProtocol:string
     -> ?sessionIdContext:string
@@ -544,32 +650,34 @@ module ConnectOptions : sig
           -> unit)
     -> unit
     -> t
+    [@@js.builder]
 end
 
-val checkServerIdentity
-  :  string
-  -> Global.Certificate.t
-  -> Import.Error.t option
+val checkServerIdentity : string -> Global.Certificate.t -> Error.t option
+  [@@js.global "checkServerIdentity"]
 
 val connect : ConnectOptions.t -> ?callback:(unit -> unit) -> unit -> Server.t
+  [@@js.global "connect"]
 
 val createSecureContext
   :  ?options:CreateSecureContextOptions.t
   -> unit
   -> SecureContext.t
+  [@@js.global "createSecureContext"]
 
 val createServer
   :  ?options:CreateServerOptions.t
   -> ?secureConnectionListener:(unit -> unit)
   -> unit
   -> SecureContext.t
+  [@@js.global "createServer"]
 
-val getCiphers : unit -> string list
+val getCiphers : unit -> string list [@@js.global "getCiphers"]
 
-val rootCertificates : string list
+val rootCertificates : string list [@@js.global "rootCertificates"]
 
-val default_ecdh_curve : string
+val default_ecdh_curve : string [@@js.global "DEFAULT_ECDH_CURVE"]
 
-val default_max_version : string
+val default_max_version : string [@@js.global "DEFAULT_MAX_VERSION"]
 
-val default_min_version : string
+val default_min_version : string [@@js.global "DEFAULT_MIN_VERSION"]

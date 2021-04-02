@@ -1,15 +1,20 @@
-module Dict = Import.Dict
-module Error = Import.Error
-module Os = Os
-module Timeout = Timers.Timeout
-module Process = Process
+include Js
+include Global
 module Buffer = Buffer
-module Stream = Stream
-module Path = Path
-module Console = Console
-module Fs = Fs
 module ChildProcess = Child_process
+module Console = Console
+module Crypto = Crypto
+module Dns = Dns
+module Fs = Fs
 module Http = Http
 module Https = Https
+module Net = Net
+module Os = Os
+module Path = Path
+module Process = Process
+module Stream = Stream
+module Timeout = Timers.Timeout
 module Tls = Tls
-include Global
+module Tty = Tty
+module Util = Util
+module WebCrypto = Web_crypto

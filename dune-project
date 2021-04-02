@@ -23,7 +23,9 @@
   (ocaml
    (>= 4.08.0))
   dune
-  gen_js_api
-  promise_jsoo
+  (gen_js_api
+   (>= 1.0.8))
   js_of_ocaml
+  js_of_ocaml-compiler
+  ojs
   (odoc :with-doc)))

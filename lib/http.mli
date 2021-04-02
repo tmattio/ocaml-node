@@ -1,57 +1,69 @@
-open Import
+open Js
+
+[@@@js.scope Import.http]
 
 module IncomingMessage : sig
-  include module type of Stream.Readable
+  include module type of struct
+    include Stream.Readable
+  end
 
-  val aborted : t -> bool
+  val aborted : t -> bool [@@js.get]
 
-  val complete : t -> bool
+  val complete : t -> bool [@@js.get]
 
-  val destroy : t -> unit
+  val destroy : t -> unit [@@js.call]
 
-  val headers : t -> string Dict.t
+  val headers : t -> string Dict.t [@@js.get]
 
-  val httpVersion : t -> string
+  val httpVersion : t -> string [@@js.get]
 
-  val method_ : t -> string
+  val method_ : t -> string [@@js.get "method"]
 
-  val rawHeaders : t -> string list
+  val rawHeaders : t -> string list [@@js.get]
 
-  val rawTrailers : t -> string list
+  val rawTrailers : t -> string list [@@js.get]
 
-  val setTimeout : int -> t
+  val setTimeout : int -> t [@@js.call]
 
-  val socket : t -> Stream.Duplex.t
+  val socket : t -> Stream.Duplex.t [@@js.get]
+
+  val statusCode : t -> int [@@js.get]
+
+  val statusMessage : t -> string [@@js.get]
+
+  val url : t -> string [@@js.get]
 end
 
 module ClientRequest : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   module Info : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val httpVersion : t -> string
+    val t_of_js : Ojs.t -> t
 
-    val httpVersionMajor : t -> int
+    val httpVersion : t -> string [@@js.get]
 
-    val httpVersionMinor : t -> int
+    val httpVersionMajor : t -> int [@@js.get]
 
-    val statusCode : t -> int
+    val httpVersionMinor : t -> int [@@js.get]
 
-    val statusMessage : t -> string
+    val statusCode : t -> int [@@js.get]
 
-    val headers : t -> string Dict.t
+    val statusMessage : t -> string [@@js.get]
 
-    val rawHeaders : t -> string list
+    val headers : t -> string Dict.t [@@js.get]
+
+    val rawHeaders : t -> string list [@@js.get]
   end
+
+  [@@@js.stop]
 
   val on
     :  t
@@ -68,7 +80,36 @@ module ClientRequest : sig
        ]
     -> unit
 
-  val aborted : t -> bool
+  [@@@js.start]
+
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
+
+  let on t = function
+    | `Abort f ->
+      on t "abort" @@ [%js.of: unit -> unit] f
+    | `Connect f ->
+      on t "connect"
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f
+    | `Continue f ->
+      on t "continue" @@ [%js.of: unit -> unit] f
+    | `Information f ->
+      on t "information" @@ [%js.of: Info.t -> unit] f
+    | `Response f ->
+      on t "response" @@ [%js.of: IncomingMessage.t -> unit] f
+    | `Socket f ->
+      on t "socket" @@ [%js.of: Stream.Duplex.t -> unit] f
+    | `Timeout f ->
+      on t "timeout" @@ [%js.of: unit -> unit] f
+    | `Upgrade f ->
+      on t "upgrade"
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f]
+
+  val aborted : t -> bool [@@js.get]
 
   val end_
     :  t
@@ -77,32 +118,33 @@ module ClientRequest : sig
     -> ?callback:(unit -> unit)
     -> unit
     -> t
+    [@@js.call "end"]
 
-  val destroy : t -> ?error:Error.t -> unit -> t
+  val destroy : t -> ?error:Error.t -> unit -> t [@@js.call]
 
-  val destroyed : t -> bool
+  val destroyed : t -> bool [@@js.get]
 
-  val flushHeaders : t -> unit
+  val flushHeaders : t -> unit [@@js.call]
 
-  val getHeader : t -> string -> Ojs.t
+  val getHeader : t -> string -> Ojs.t [@@js.call]
 
-  val maxHeadersCount : t -> int
+  val maxHeadersCount : t -> int [@@js.get]
 
-  val path : t -> string
+  val path : t -> string [@@js.get]
 
-  val method_ : t -> string
+  val method_ : t -> string [@@js.get "method"]
 
-  val host : t -> string
+  val host : t -> string [@@js.get]
 
-  val protocol : t -> string
+  val protocol : t -> string [@@js.get]
 
-  val removeHeader : t -> string -> unit
+  val removeHeader : t -> string -> unit [@@js.call]
 
-  val reusedSocket : t -> bool
+  val reusedSocket : t -> bool [@@js.get]
 
-  val setHeader : t -> string -> Ojs.t -> unit
+  val setHeader : t -> string -> Ojs.t -> unit [@@js.call]
 
-  val setNoDelay : t -> ?noDelay:bool -> unit -> unit
+  val setNoDelay : t -> ?noDelay:bool -> unit -> unit [@@js.call]
 
   val setSocketKeepAlive
     :  t
@@ -110,14 +152,15 @@ module ClientRequest : sig
     -> ?initialDelay:int
     -> unit
     -> unit
+    [@@js.call]
 
-  val setTimeout : t -> int -> ?callback:(unit -> unit) -> unit -> t
+  val setTimeout : t -> int -> ?callback:(unit -> unit) -> unit -> t [@@js.call]
 
-  val socket : t -> Stream.Duplex.t
+  val socket : t -> Stream.Duplex.t [@@js.get]
 
-  val writableEnded : t -> bool
+  val writableEnded : t -> bool [@@js.get]
 
-  val writableFinished : t -> bool
+  val writableFinished : t -> bool [@@js.get]
 
   val write
     :  t
@@ -126,21 +169,22 @@ module ClientRequest : sig
     -> ?callback:(unit -> unit)
     -> unit
     -> bool
+    [@@js.call]
 end
 
 module Agent : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   module Options : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?keepAlive:bool
@@ -152,28 +196,30 @@ module Agent : sig
       -> ?timeout:int
       -> unit
       -> t
+      [@@js.builder]
   end
 
   module CreateConnectionOptions : sig
     module OnReadOptions : sig
       type t
 
-      val t_of_js : Ojs.t -> t
-
       val t_to_js : t -> Ojs.t
+
+      val t_of_js : Ojs.t -> t
 
       val create
         :  ?buffer:Buffer.Buffer.t
         -> ?callback:(int -> Buffer.Buffer.t -> unit)
         -> unit
         -> t
+        [@@js.builder]
     end
 
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?fd:int
@@ -187,33 +233,35 @@ module Agent : sig
       -> ?family:int
       -> ?hints:int
       -> ?lookup:
-           (err:Error.t or_undefined
+           (err:Error.t option
             -> address:string
-            -> family:string or_undefined
+            -> family:string option
             -> host:string
             -> unit)
       -> ?path:string
       -> ?onread:OnReadOptions.t
       -> unit
       -> t
+      [@@js.builder]
   end
 
   val createConnection : t -> CreateConnectionOptions.t -> Stream.Duplex.t
+    [@@js.call]
 
-  val keepSocketAlive : t -> Stream.Duplex.t -> unit
+  val keepSocketAlive : t -> Stream.Duplex.t -> unit [@@js.call]
 
-  val reuseSocket : t -> Stream.Duplex.t -> ClientRequest.t -> unit
+  val reuseSocket : t -> Stream.Duplex.t -> ClientRequest.t -> unit [@@js.call]
 
-  val destroy : t -> unit
+  val destroy : t -> unit [@@js.call]
 
-  val freeSockets : t -> Stream.Duplex.t list
+  val freeSockets : t -> Stream.Duplex.t list [@@js.get]
 
   module GetNameOptions : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?host:string
@@ -222,35 +270,49 @@ module Agent : sig
       -> ?family:int
       -> unit
       -> t
+      [@@js.builder]
   end
 
-  val getName : t -> GetNameOptions.t -> string
+  val getName : t -> GetNameOptions.t -> string [@@js.call]
 
-  val maxFreeSockets : t -> int
+  val maxFreeSockets : t -> int [@@js.get]
 
-  val maxSockets : t -> int
+  val maxSockets : t -> int [@@js.get]
 
-  val maxTotalSockets : t -> int
+  val maxTotalSockets : t -> int [@@js.get]
 
-  val requests : t -> ClientRequest.t list
+  val requests : t -> ClientRequest.t list [@@js.get]
 
-  val sockets : t -> Stream.Duplex.t list
+  val sockets : t -> Stream.Duplex.t list [@@js.get]
 
-  val create : ?options:Options.t -> unit -> t
+  val create : ?options:Options.t -> unit -> t [@@js.builder]
 end
 
 module ServerResponse : sig
   type t
 
+  val t_to_js : t -> Ojs.t
+
   val t_of_js : Ojs.t -> t
 
-  val t_to_js : t -> Ojs.t
+  [@@@js.stop]
 
   val on : t -> [< `Close of unit -> unit | `Finish of unit -> unit ] -> unit
 
-  val addTrailers : t -> string Dict.t
+  [@@@js.start]
 
-  val cork : t -> unit
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
+
+  let on t = function
+    | `Close f ->
+      on t "close" @@ [%js.of: unit -> unit] f
+    | `Finish f ->
+      on t "finish" @@ [%js.of: unit -> unit] f]
+
+  val addTrailers : t -> string Dict.t [@@js.get]
+
+  val cork : t -> unit [@@js.call]
 
   val end_
     :  t
@@ -259,42 +321,43 @@ module ServerResponse : sig
     -> ?callback:(unit -> unit)
     -> unit
     -> t
+    [@@js.call "end"]
 
-  val finished : t -> bool
+  val finished : t -> bool [@@js.get]
 
-  val flushHeaders : t -> unit
+  val flushHeaders : t -> unit [@@js.call]
 
-  val getHeader : t -> string -> Ojs.t
+  val getHeader : t -> string -> Ojs.t [@@js.call]
 
-  val getHeaderNames : t -> string list
+  val getHeaderNames : t -> string list [@@js.get]
 
-  val getHeaders : t -> Ojs.t Dict.t
+  val getHeaders : t -> Ojs.t Dict.t [@@js.get]
 
-  val hasHeader : t -> string -> bool
+  val hasHeader : t -> string -> bool [@@js.call]
 
-  val headersSent : t -> bool
+  val headersSent : t -> bool [@@js.get]
 
-  val removeHeader : t -> string -> unit
+  val removeHeader : t -> string -> unit [@@js.call]
 
-  val req : t -> IncomingMessage.t
+  val req : t -> IncomingMessage.t [@@js.get]
 
-  val sendDate : t -> bool
+  val sendDate : t -> bool [@@js.get]
 
-  val setHeader : t -> string -> Ojs.t -> t
+  val setHeader : t -> string -> Ojs.t -> t [@@js.call]
 
-  val setTimeout : t -> int -> ?callback:(unit -> unit) -> unit -> t
+  val setTimeout : t -> int -> ?callback:(unit -> unit) -> unit -> t [@@js.call]
 
-  val socket : t -> Stream.Duplex.t
+  val socket : t -> Stream.Duplex.t [@@js.get]
 
-  val statusCode : t -> int
+  val statusCode : t -> int [@@js.get]
 
-  val statusMessage : t -> string
+  val statusMessage : t -> string [@@js.get]
 
-  val uncork : t -> unit
+  val uncork : t -> unit [@@js.call]
 
-  val writableEnded : t -> bool
+  val writableEnded : t -> bool [@@js.get]
 
-  val writableFinished : t -> bool
+  val writableFinished : t -> bool [@@js.get]
 
   val write
     :  t
@@ -303,8 +366,9 @@ module ServerResponse : sig
     -> ?callback:(unit -> unit)
     -> unit
     -> bool
+    [@@js.call]
 
-  val writeContinue : t -> unit
+  val writeContinue : t -> unit [@@js.call]
 
   val writeHead
     :  t
@@ -313,22 +377,25 @@ module ServerResponse : sig
     -> ?headers:Ojs.t Dict.t
     -> unit
     -> t
+    [@@js.call]
 
-  val writeProcessing : t -> unit
+  val writeProcessing : t -> unit [@@js.call]
 end
 
 module Server : sig
   type t
 
+  val t_to_js : t -> Ojs.t
+
   val t_of_js : Ojs.t -> t
 
-  val t_to_js : t -> Ojs.t
+  [@@@js.stop]
 
   val on
     :  t
     -> [< `CheckContinue of IncomingMessage.t -> t -> unit
        | `CheckExpectation of IncomingMessage.t -> t -> unit
-       | `ClientError of Import.Error.t -> Stream.Duplex.t -> unit
+       | `ClientError of Js.Error.t -> Stream.Duplex.t -> unit
        | `Close of unit -> unit
        | `Connect of
          IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit
@@ -339,35 +406,71 @@ module Server : sig
        ]
     -> unit
 
-  val close : t -> ?callback:(unit -> unit) -> unit -> unit
+  [@@@js.start]
 
-  val headersTimeout : t -> int
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
 
-  val listen : t -> unit
+  let on t = function
+    | `CheckContinue f ->
+      on t "checkContinue"
+      @@ [%js.of: IncomingMessage.t -> ServerResponse.t -> unit] f
+    | `CheckExpectation f ->
+      on t "checkExpectation"
+      @@ [%js.of: IncomingMessage.t -> ServerResponse.t -> unit] f
+    | `ClientError f ->
+      on t "clientError" @@ [%js.of: Error.t -> Stream.Duplex.t -> unit] f
+    | `Close f ->
+      on t "close" @@ [%js.of: unit -> unit] f
+    | `Connect f ->
+      on t "connect"
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f
+    | `Connection f ->
+      on t "connection" @@ [%js.of: Stream.Duplex.t -> unit] f
+    | `Request f ->
+      on t "request"
+      @@ [%js.of: IncomingMessage.t -> ServerResponse.t -> unit] f
+    | `Upgrade f ->
+      on t "upgrade"
+      @@ [%js.of:
+           IncomingMessage.t -> Stream.Duplex.t -> Buffer.Buffer.t -> unit]
+           f]
 
-  val listening : t -> bool
+  val close : t -> ?callback:(unit -> unit) -> unit -> unit [@@js.call]
 
-  val maxHeadersCount : t -> int
+  val headersTimeout : t -> int [@@js.get]
 
-  val requestTimeout : t -> int
+  val listen : t -> unit [@@js.call]
+
+  val listening : t -> bool [@@js.get]
+
+  val maxHeadersCount : t -> int [@@js.get]
+
+  val requestTimeout : t -> int [@@js.get]
 
   val setTimeout : t -> int -> ?callback:(unit -> unit) -> unit -> unit
+    [@@js.call]
 
-  val timeout : t -> int
+  val timeout : t -> int [@@js.get]
 
-  val keepAliveTimeout : t -> int
+  val keepAliveTimeout : t -> int [@@js.get]
 end
 
-val methods : string list
+val methods : string list [@@js.global "METHODS"]
+
+(* val status_code : string IntDict.t [@@js.global "STATUS_CODES"] *)
 
 module CreateServerOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
+  val t_of_js : Ojs.t -> t
+
   val create : ?insecureHTTPParser:bool -> ?maxHeaderSize:int -> unit -> t
+    [@@js.builder]
 end
 
 val createServer
@@ -375,13 +478,14 @@ val createServer
   -> ?requestListener:(IncomingMessage.t -> ServerResponse.t -> unit)
   -> unit
   -> unit
+  [@@js.global "createServer"]
 
 module RequestOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?agent:Agent.t
@@ -410,6 +514,7 @@ module RequestOptions : sig
     -> ?signal:Global.AbortSignal.t
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val get
@@ -418,10 +523,11 @@ val get
   -> ?callback:(IncomingMessage.t -> unit)
   -> unit
   -> ClientRequest.t
+  [@@js.global "get"]
 
-val globalAgent : Agent.t
+val globalAgent : Agent.t [@@js.global "globalAgent"]
 
-val maxHeaderSize : int
+val maxHeaderSize : int [@@js.global "maxHeaderSize"]
 
 val request
   :  string
@@ -429,7 +535,9 @@ val request
   -> ?callback:(IncomingMessage.t -> unit)
   -> unit
   -> ClientRequest.t
+  [@@js.global "request"]
 
-val validateHeaderName : string -> unit
+val validateHeaderName : string -> unit [@@js.global "validateHeaderName"]
 
 val validateHeaderValue : string -> Ojs.t -> unit
+  [@@js.global "validateHeaderValue"]

@@ -1,45 +1,37 @@
-type 'a or_undefined = 'a option
+[@@@js.scope "__LIB__NODE__IMPORTS"]
 
-val or_undefined_of_js : (Ojs.t -> 'a) -> Ojs.t -> 'a or_undefined
+val buffer : Ojs.t [@@js.global]
 
-val or_undefined_to_js : ('a -> Ojs.t) -> 'a or_undefined -> Ojs.t
+val child_process : Ojs.t [@@js.global]
 
-module Dict : sig
-  include Map.S with type key = string
+val console : Ojs.t [@@js.global]
 
-  val t_of_js : (Ojs.t -> 'a) -> Ojs.t -> 'a t
+val crypto : Ojs.t [@@js.global]
 
-  val t_to_js : ('a -> Ojs.t) -> 'a t -> Ojs.t
+val dns : Ojs.t [@@js.global]
 
-  val of_alist : (string * 'a) list -> 'a t
-end
+val fs : Ojs.t [@@js.global]
 
-module Error : sig
-  type t
+val fs_promises : Ojs.t [@@js.global]
 
-  val t_of_js : Ojs.t -> t
+val http : Ojs.t [@@js.global]
 
-  val t_to_js : t -> Ojs.t
+val https : Ojs.t [@@js.global]
 
-  val message : t -> string
-end
+val net : Ojs.t [@@js.global]
 
-module ArrayBuffer : sig
-  type t
+val os : Ojs.t [@@js.global]
 
-  val t_of_js : Ojs.t -> t
+val path : Ojs.t [@@js.global]
 
-  val t_to_js : t -> Ojs.t
-end
+val process : Ojs.t [@@js.global]
 
-module Uint8Array : sig
-  type t
+val stream : Ojs.t [@@js.global]
 
-  val t_of_js : Ojs.t -> t
+val timers : Ojs.t [@@js.global]
 
-  val t_to_js : t -> Ojs.t
+val tls : Ojs.t [@@js.global]
 
-  val new_ : t -> t
+val tty : Ojs.t [@@js.global]
 
-  val to_string : t -> string
-end
+val util : Ojs.t [@@js.global]

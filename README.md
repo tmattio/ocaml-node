@@ -51,7 +51,7 @@ opam install node
 | Timers               | 🚧        | `Node.Timeout`      |
 | TLS/SSL              | ✅        | `Node.Tls`          |
 | Trace events         | ❌        | n/a                 |
-| TTY                  | ❌        | n/a                 |
+| TTY                  | ✅        | `Node.Tty`          |
 | UDP/datagram         | ❌        | n/a                 |
 | URL                  | ❌        | n/a                 |
 | Utilities            | 🚧        | `Node.Util`         |

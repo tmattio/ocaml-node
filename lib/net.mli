@@ -1,29 +1,31 @@
-open Import
+open Js
 
 module BlockList : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val addAddress : t -> string -> ?type_:string -> unit -> unit
+  val t_of_js : Ojs.t -> t
+
+  val addAddress : t -> string -> ?type_:string -> unit -> unit [@@js.call]
 
   val addRange : t -> string -> string -> ?type_:string -> unit -> unit
+    [@@js.call]
 
   val addSubnet : t -> string -> int -> ?type_:string -> unit -> unit
+    [@@js.call]
 
-  val check : t -> string -> ?type_:string -> unit -> bool
+  val check : t -> string -> ?type_:string -> unit -> bool [@@js.call]
 
-  val rules : t -> string list
+  val rules : t -> string list [@@js.get]
 end
 
 module Socket : sig
-  type t
+  include module type of struct
+    include Stream.Duplex
+  end
 
-  val t_of_js : Ojs.t -> t
-
-  val t_to_js : t -> Ojs.t
+  [@@@js.stop]
 
   val on
     :  t
@@ -32,9 +34,9 @@ module Socket : sig
        | `Data of Buffer.Buffer.t -> unit
        | `Drain of unit -> unit
        | `End of unit -> unit
-       | `Error of Import.Error.t -> unit
+       | `Error of Js.Error.t -> unit
        | `Lookup of
-         err:Import.Error.t option
+         err:Js.Error.t option
          -> address:string
          -> family:string option
          -> host:string
@@ -44,32 +46,66 @@ module Socket : sig
        ]
     -> unit
 
-  val address : t -> Global.Address.t
+  [@@@js.start]
 
-  val bytesRead : t -> int
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
 
-  val bytesWritten : t -> int
+  let on t = function
+    | `Close f ->
+      on t "close" @@ [%js.of: hadError:bool -> unit] f
+    | `Connect f ->
+      on t "connect" @@ [%js.of: unit -> unit] f
+    | `Data f ->
+      (* TODO: Can also be [string -> unit] depending on Socket.setEncoding() *)
+      on t "connect" @@ [%js.of: Buffer.Buffer.t -> unit] f
+    | `Drain f ->
+      on t "drain" @@ [%js.of: unit -> unit] f
+    | `End f ->
+      on t "end" @@ [%js.of: unit -> unit] f
+    | `Error f ->
+      on t "error" @@ [%js.of: Error.t -> unit] f
+    | `Lookup f ->
+      on t "lookup"
+      @@ [%js.of:
+           err:Error.t option
+           -> address:string
+           -> family:string option
+           -> host:string
+           -> unit]
+           f
+    | `Ready f ->
+      on t "ready" @@ [%js.of: unit -> unit] f
+    | `Timeout f ->
+      on t "timeout" @@ [%js.of: unit -> unit] f]
+
+  val address : t -> Global.Address.t [@@js.get]
+
+  val bytesRead : t -> int [@@js.get]
+
+  val bytesWritten : t -> int [@@js.get]
 
   module ConnectOptions : sig
     module OnReadOptions : sig
       type t
 
-      val t_of_js : Ojs.t -> t
-
       val t_to_js : t -> Ojs.t
+
+      val t_of_js : Ojs.t -> t
 
       val create
         :  ?buffer:Buffer.Buffer.t
         -> ?callback:(int -> Buffer.Buffer.t -> unit)
         -> unit
         -> t
+        [@@js.builder]
     end
 
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?port:int
@@ -85,81 +121,87 @@ module Socket : sig
             -> host:string
             -> unit)
       -> ?path:string
-      -> ?onread:t
+      -> ?onread:OnReadOptions.t
       -> unit
       -> t
+      [@@js.builder]
   end
 
-  val connect : t -> t -> t
+  val connect : t -> ConnectOptions.t -> t [@@js.call]
 
-  val connecting : t -> bool
+  val connecting : t -> bool [@@js.get]
 
-  val destroy : t -> ?error:Error.t -> unit -> unit
+  val destroy : t -> ?error:Error.t -> unit -> unit [@@js.call]
 
-  val destroyed : t -> bool
+  val destroyed : t -> bool [@@js.get]
 
   val end_
     :  t
     -> ?data:
-         [ `Buffer of Buffer.Buffer.t
-         | `String of string
-         | `Uint8Array of Uint8Array.t
-         ]
+         ([ `String of string
+          | `Buffer of Buffer.Buffer.t
+          | `Uint8Array of Uint8Array.t
+          ]
+         [@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
     -> t
+    [@@js.call "end"]
 
-  val localAddress : t -> string
+  val localAddress : t -> string [@@js.get]
 
-  val localPort : t -> int
+  val localPort : t -> int [@@js.get]
 
-  val pause : t -> t
+  val pause : t -> t [@@js.get]
 
-  val pending : t -> bool
+  val pending : t -> bool [@@js.get]
 
-  val ref : t -> t
+  val ref : t -> t [@@js.get]
 
-  val remoteAddress : t -> string
+  val remoteAddress : t -> string [@@js.get]
 
-  val remoteFamily : t -> string
+  val remoteFamily : t -> string [@@js.get]
 
-  val remotePort : t -> int
+  val remotePort : t -> int [@@js.get]
 
-  val resume : t -> t
+  val resume : t -> t [@@js.get]
 
-  val setEncoding : t -> string -> t
+  val setEncoding : t -> string -> t [@@js.call]
 
   val setKeepAlive : t -> ?enable:bool -> ?initialDelay:int -> unit -> t
+    [@@js.call]
 
-  val setNoDelay : t -> ?noDelay:bool -> unit -> t
+  val setNoDelay : t -> ?noDelay:bool -> unit -> t [@@js.call]
 
-  val setTimeout : t -> int -> ?callback:(unit -> unit) -> unit -> t
+  val setTimeout : t -> int -> ?callback:(unit -> unit) -> unit -> t [@@js.call]
 
-  val timeout : t -> int option
+  val timeout : t -> int option [@@js.get]
 
-  val unref : t -> t
+  val unref : t -> t [@@js.get]
 
   val write
     :  t
     -> ?data:
-         [ `Buffer of Buffer.Buffer.t
-         | `String of string
-         | `Uint8Array of Uint8Array.t
-         ]
+         ([ `String of string
+          | `Buffer of Buffer.Buffer.t
+          | `Uint8Array of Uint8Array.t
+          ]
+         [@js.union])
     -> ?encoding:string
     -> ?callback:(unit -> unit)
     -> unit
     -> bool
+    [@@js.call]
 
-  val readyState : t -> string
+  val readyState : t -> string [@@js.get]
 
   module Options : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?fd:int
@@ -168,39 +210,59 @@ module Socket : sig
       -> ?writable:bool
       -> unit
       -> t
+      [@@js.builder]
   end
 
-  val create : ?options:t -> unit -> t
+  val create : ?options:Options.t -> unit -> t [@@js.builder]
 end
 
 module Server : sig
   type t
 
+  val t_to_js : t -> Ojs.t
+
   val t_of_js : Ojs.t -> t
 
-  val t_to_js : t -> Ojs.t
+  [@@@js.stop]
 
   val on
     :  t
     -> [< `Close of unit -> unit
-       | `Connection of t -> unit
-       | `Error of Error.t -> unit
+       | `Connection of Socket.t -> unit
+       | `Error of Js.Error.t -> unit
        | `Listening of unit -> unit
        ]
     -> unit
 
-  val address : t -> Global.Address.t option
+  [@@@js.start]
 
-  val close : t -> ?callback:(unit -> unit) -> unit -> t
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
 
-  val getConnections : t -> (unit -> unit) -> t
+  let on t = function
+    | `Close f ->
+      on t "close" @@ [%js.of: unit -> unit] f
+    | `Connection f ->
+      on t "connection" @@ [%js.of: Socket.t -> unit] f
+    | `Error f ->
+      on t "error" @@ [%js.of: Error.t -> unit] f
+    | `Listening f ->
+      on t "listening" @@ [%js.of: unit -> unit] f]
+
+  (* TODO: For a server listening on a pipe or Unix domain socket, the name is
+     returned as a string. *)
+  val address : t -> Global.Address.t option [@@js.get]
+
+  val close : t -> ?callback:(unit -> unit) -> unit -> t [@@js.call]
+
+  val getConnections : t -> (unit -> unit) -> t [@@js.call]
 
   module ListenOptions : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?port:int
@@ -214,57 +276,64 @@ module Server : sig
       -> ?signal:Global.AbortSignal.t
       -> unit
       -> t
+      [@@js.builder]
   end
 
-  val listen : t -> t -> t
+  val listen : t -> ListenOptions.t -> t [@@js.call]
 
-  val listening : t -> bool
+  val listening : t -> bool [@@js.get]
 
-  val maxConnections : t -> int
+  val maxConnections : t -> int [@@js.get]
 
-  val ref : t -> t
+  val ref : t -> t [@@js.get]
 
-  val unref : t -> t
+  val unref : t -> t [@@js.get]
 
   module Options : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val fd : t -> int
+    val t_of_js : Ojs.t -> t
 
-    val allowHalfOpen : t -> bool
+    val fd : t -> int [@@js.get]
 
-    val readable : t -> bool
+    val allowHalfOpen : t -> bool [@@js.get]
 
-    val writable : t -> bool
+    val readable : t -> bool [@@js.get]
+
+    val writable : t -> bool [@@js.get]
   end
 
-  val create : ?options:t -> ?connectionListener:(t -> unit) -> unit -> t
+  val create
+    :  ?options:Options.t
+    -> ?connectionListener:(Socket.t -> unit)
+    -> unit
+    -> t
+    [@@js.builder]
 end
 
 module ConnectOptions : sig
   module OnReadOptions : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
+
+    val t_of_js : Ojs.t -> t
 
     val create
       :  ?buffer:Buffer.Buffer.t
       -> ?callback:(int -> Buffer.Buffer.t -> unit)
       -> unit
       -> t
+      [@@js.builder]
   end
 
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?fd:int
@@ -284,9 +353,10 @@ module ConnectOptions : sig
           -> host:string
           -> unit)
     -> ?path:string
-    -> ?onread:t
+    -> ?onread:OnReadOptions.t
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val connect
@@ -294,23 +364,25 @@ val connect
   -> ?connectionListener:(Buffer.Buffer.t -> unit)
   -> unit
   -> Socket.t
+  [@@js.global "connect"]
 
 val createConnection
   :  ConnectOptions.t
   -> ?connectionListener:(Buffer.Buffer.t -> unit)
   -> unit
   -> Socket.t
+  [@@js.global "createConnection"]
 
 module CreateServerOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val allowHalfOpen : t -> bool
+  val t_of_js : Ojs.t -> t
 
-  val pauseOnConnect : t -> bool
+  val allowHalfOpen : t -> bool [@@js.get]
+
+  val pauseOnConnect : t -> bool [@@js.get]
 end
 
 val createServer
@@ -318,9 +390,10 @@ val createServer
   -> ?connectionListener:(Socket.t -> unit)
   -> unit
   -> Server.t
+  [@@js.global "createServer"]
 
-val isIP : string -> bool
+val isIP : string -> bool [@@js.global "isIP"]
 
-val isIPv4 : string -> bool
+val isIPv4 : string -> bool [@@js.global "isIPv4"]
 
-val isIPv6 : string -> bool
+val isIPv6 : string -> bool [@@js.global "isIPv6"]

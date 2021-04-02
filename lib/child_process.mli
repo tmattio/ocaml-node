@@ -1,91 +1,121 @@
-open Import
+open Js
+
+[@@@js.scope Import.child_process]
 
 module ChildProcess : sig
   type t
 
+  val t_to_js : t -> Ojs.t
+
   val t_of_js : Ojs.t -> t
 
-  val t_to_js : t -> Ojs.t
+  [@@@js.stop]
 
   val on
     :  t
-    -> [< `Close of code:int -> signal:string -> unit
+    -> [< `Close of code:int -> signal:string option -> unit
        | `Disconnect of unit -> unit
-       | `Error of err:Error.t -> unit
+       | `Error of err:Js.Error.t -> unit
        | `Exit of code:int -> signal:string -> unit
-       | `Message of message:t -> sendHandle:'e -> unit
+       | `Message of message:t -> sendHandle:t -> unit
        | `Spawn of unit -> unit
        ]
     -> unit
 
+  [@@@js.start]
+
+  [@@@js.implem
+  val on : t -> string -> Ojs.t -> unit [@@js.call]
+
+  let on t = function
+    | `Close f ->
+      on t "close" @@ [%js.of: code:int -> signal:string option -> unit] f
+    | `Disconnect f ->
+      on t "disconnect" @@ [%js.of: unit -> unit] f
+    | `Error f ->
+      on t "error" @@ [%js.of: err:Error.t -> unit] f
+    | `Exit f ->
+      on t "exit" @@ [%js.of: code:int -> signal:string -> unit] f
+    | `Message f ->
+      on t "message" @@ [%js.of: message:Ojs.t -> sendHandle:Ojs.t -> unit] f
+    | `Spawn f ->
+      on t "spawn" @@ [%js.of: unit -> unit] f]
+
   module Channel : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val ref : t -> t
+    val t_of_js : Ojs.t -> t
 
-    val unref : t -> t
+    val ref : t -> t [@@js.call]
+
+    val unref : t -> t [@@js.call]
   end
 
-  val channel : t -> t
+  val channel : t -> Channel.t [@@js.get]
 
-  val connected : t -> bool
+  val connected : t -> bool [@@js.get]
 
-  val disconnect : t -> unit
+  val disconnect : t -> unit [@@js.call]
 
-  val exitCode : t -> int
+  val exitCode : t -> int [@@js.get]
 
-  val kill : t -> ?signal:[ `Int of int | `String of string ] -> unit -> bool
+  val kill
+    :  t
+    -> ?signal:([ `String of string | `Int of int ][@js.union])
+    -> unit
+    -> bool
+    [@@js.call]
 
-  val killed : t -> bool
+  val killed : t -> bool [@@js.get]
 
-  val pid : t -> int option
+  val pid : t -> int option [@@js.get]
 
-  val ref : t -> unit
+  val ref : t -> unit [@@js.call]
 
   module SendOptions : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val create : ?keepOpen:bool -> unit -> t
+    val t_of_js : Ojs.t -> t
+
+    val create : ?keepOpen:bool -> unit -> t [@@js.builder]
   end
 
   val send
     :  t
-    -> t
-    -> ?sendHandle:[ `Server of Net.Server.t | `Socket of Net.Socket.t ]
-    -> ?options:t
+    -> Ojs.t
+    -> ?sendHandle:
+         ([ `Server of Net.Server.t | `Socket of Net.Socket.t ][@js.union])
+    -> ?options:SendOptions.t
     -> ?callback:(Error.t option -> unit)
     -> unit
     -> bool
+    [@@js.call]
 
-  val signalCode : t -> string option
+  val signalCode : t -> string option [@@js.get]
 
-  val spawnargs : t -> string list
+  val spawnargs : t -> string list [@@js.get]
 
-  val spawnfile : t -> string
+  val spawnfile : t -> string [@@js.get]
 
-  val stderr : t -> Stream.Readable.t
+  val stderr : t -> Stream.Readable.t [@@js.get]
 
-  val stdin : t -> Stream.Writable.t
+  val stdin : t -> Stream.Writable.t [@@js.get]
 
-  val stdout : t -> Stream.Readable.t
+  val stdout : t -> Stream.Readable.t [@@js.get]
 
-  val unref : t -> unit
+  val unref : t -> unit [@@js.call]
 end
 
 module ExecOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?cwd:string
@@ -100,6 +130,7 @@ module ExecOptions : sig
     -> ?windowsHide:bool
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val exec
@@ -108,13 +139,17 @@ val exec
   -> ?callback:(Error.t option -> string -> string -> unit)
   -> unit
   -> ChildProcess.t
+  [@@js.global ]
+
+val execSync : string -> ?options:ExecOptions.t -> unit -> string
+  [@@js.global ]
 
 module ExecFileOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?cwd:string
@@ -130,6 +165,7 @@ module ExecFileOptions : sig
     -> ?signal:Global.AbortSignal.t
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val execFile
@@ -139,13 +175,14 @@ val execFile
   -> ?callback:(Error.t option -> string -> string -> unit)
   -> unit
   -> ChildProcess.t
+  [@@js.global ]
 
 module ForkOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?cwd:string
@@ -163,6 +200,7 @@ module ForkOptions : sig
     -> ?windowsVerbatimArguments:bool
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val fork
@@ -171,13 +209,14 @@ val fork
   -> ?options:ForkOptions.t
   -> unit
   -> ChildProcess.t
+  [@@js.global ]
 
 module SpawnOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?cwd:string
@@ -195,6 +234,7 @@ module SpawnOptions : sig
     -> ?killSignal:string
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val spawn
@@ -203,29 +243,31 @@ val spawn
   -> ?options:SpawnOptions.t
   -> unit
   -> ChildProcess.t
+  [@@js.global ]
 
 module ExecFileSyncOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?cwd:string
-    -> ?input:[ `Buffer of Buffer.Buffer.t | `String of string ]
+    -> ?input:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?stdio:string list
     -> ?env:string Dict.t
     -> ?uid:int
     -> ?gid:int
     -> ?timeout:int
-    -> ?killSignal:[ `Int of int | `String of string ]
+    -> ?killSignal:([ `String of string | `Int of int ][@js.union])
     -> ?maxBuffer:int
     -> ?encoding:string
     -> ?windowsHide:bool
-    -> ?shell:[ `Bool of bool | `String of string ]
+    -> ?shell:([ `String of string | `Bool of bool ][@js.union])
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val execFileSync
@@ -234,58 +276,62 @@ val execFileSync
   -> ?options:ExecFileSyncOptions.t
   -> unit
   -> string
+  [@@js.global ]
 
 module SpawnSyncOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?cwd:string
-    -> ?input:[ `Buffer of Buffer.Buffer.t | `String of string ]
+    -> ?input:([ `String of string | `Buffer of Buffer.Buffer.t ][@js.union])
     -> ?argv0:string
     -> ?stdio:string list
     -> ?env:string Dict.t
     -> ?uid:int
     -> ?gid:int
     -> ?timeout:int
-    -> ?killSignal:[ `Int of int | `String of string ]
+    -> ?killSignal:([ `String of string | `Int of int ][@js.union])
     -> ?maxBuffer:int
     -> ?encoding:string
-    -> ?shell:[ `Bool of bool | `String of string ]
+    -> ?shell:([ `String of string | `Bool of bool ][@js.union])
     -> ?windowsVerbatimArguments:bool
     -> ?windowsHide:bool
     -> ?killSignal:string
     -> unit
     -> t
+    [@@js.builder]
 end
 
 module SpawnSyncReturn : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val pid : t -> int
+  val t_of_js : Ojs.t -> t
 
-  val output : t -> string list
+  val pid : t -> int [@@js.get]
 
-  val stdout : t -> string
+  val output : t -> string list [@@js.get]
 
-  val stderr : t -> string
+  val stdout : t -> string [@@js.get]
 
-  val status : t -> int option
+  val stderr : t -> string [@@js.get]
 
-  val signal : t -> string option
+  val status : t -> int option [@@js.get]
 
-  val error : t -> Error.t option
+  val signal : t -> string option [@@js.get]
+
+  val error : t -> Error.t option [@@js.get]
 end
 
 val spawnSync
   :  string
+  -> ?args:string list
   -> ?options:SpawnSyncOptions.t
   -> unit
   -> SpawnSyncReturn.t
+  [@@js.global ]

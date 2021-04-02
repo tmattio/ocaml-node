@@ -1,537 +1,542 @@
+[@@@js.scope Import.os]
+
 module CPU : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   module Times : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val user : t -> int
+    val t_of_js : Ojs.t -> t
 
-    val nice : t -> int
+    val user : t -> int [@@js.get]
 
-    val sys : t -> int
+    val nice : t -> int [@@js.get]
 
-    val idle : t -> int
+    val sys : t -> int [@@js.get]
 
-    val irq : t -> int
+    val idle : t -> int [@@js.get]
+
+    val irq : t -> int [@@js.get]
   end
 
-  val model : t -> string
+  val model : t -> string [@@js.get]
 
-  val speed : t -> int
+  val speed : t -> int [@@js.get]
 
-  val times : t -> Ojs.t
+  val times : t -> Times.t [@@js.get]
 end
 
 module Constant : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   module Signals : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val sighup : t -> Ojs.t
+    val t_of_js : Ojs.t -> t
 
-    val sigint : t -> Ojs.t
+    val sighup : t -> Ojs.t [@@js.get "SIGHUP"]
 
-    val sigquit : t -> Ojs.t
+    val sigint : t -> Ojs.t [@@js.get "SIGINT"]
 
-    val sigill : t -> Ojs.t
+    val sigquit : t -> Ojs.t [@@js.get "SIGQUIT"]
 
-    val sigtrap : t -> Ojs.t
+    val sigill : t -> Ojs.t [@@js.get "SIGILL"]
 
-    val sigabrt : t -> Ojs.t
+    val sigtrap : t -> Ojs.t [@@js.get "SIGTRAP"]
 
-    val sigiot : t -> Ojs.t
+    val sigabrt : t -> Ojs.t [@@js.get "SIGABRT"]
 
-    val sigbus : t -> Ojs.t
+    val sigiot : t -> Ojs.t [@@js.get "SIGIOT"]
 
-    val sigfpe : t -> Ojs.t
+    val sigbus : t -> Ojs.t [@@js.get "SIGBUS"]
 
-    val sigkill : t -> Ojs.t
+    val sigfpe : t -> Ojs.t [@@js.get "SIGFPE"]
 
-    val sigusr1 : t -> Ojs.t
+    val sigkill : t -> Ojs.t [@@js.get "SIGKILL"]
 
-    val sigsegv : t -> Ojs.t
+    val sigusr1 : t -> Ojs.t [@@js.get "SIGUSR1"]
 
-    val sigpipe : t -> Ojs.t
+    val sigsegv : t -> Ojs.t [@@js.get "SIGSEGV"]
 
-    val sigalrm : t -> Ojs.t
+    val sigpipe : t -> Ojs.t [@@js.get "SIGPIPE"]
 
-    val sigterm : t -> Ojs.t
+    val sigalrm : t -> Ojs.t [@@js.get "SIGALRM"]
 
-    val sigchld : t -> Ojs.t
+    val sigterm : t -> Ojs.t [@@js.get "SIGTERM"]
 
-    val sigstkflt : t -> Ojs.t
+    val sigchld : t -> Ojs.t [@@js.get "SIGCHLD"]
 
-    val sigcont : t -> Ojs.t
+    val sigstkflt : t -> Ojs.t [@@js.get "SIGSTKFLT"]
 
-    val sigstop : t -> Ojs.t
+    val sigcont : t -> Ojs.t [@@js.get "SIGCONT"]
 
-    val sigtstp : t -> Ojs.t
+    val sigstop : t -> Ojs.t [@@js.get "SIGSTOP"]
 
-    val sigbreak : t -> Ojs.t
+    val sigtstp : t -> Ojs.t [@@js.get "SIGTSTP"]
 
-    val sigttin : t -> Ojs.t
+    val sigbreak : t -> Ojs.t [@@js.get "SIGBREAK"]
 
-    val sigttou : t -> Ojs.t
+    val sigttin : t -> Ojs.t [@@js.get "SIGTTIN"]
 
-    val sigurg : t -> Ojs.t
+    val sigttou : t -> Ojs.t [@@js.get "SIGTTOU"]
 
-    val sigxcpu : t -> Ojs.t
+    val sigurg : t -> Ojs.t [@@js.get "SIGURG"]
 
-    val sigxfsz : t -> Ojs.t
+    val sigxcpu : t -> Ojs.t [@@js.get "SIGXCPU"]
 
-    val sigvtalrm : t -> Ojs.t
+    val sigxfsz : t -> Ojs.t [@@js.get "SIGXFSZ"]
 
-    val sigprof : t -> Ojs.t
+    val sigvtalrm : t -> Ojs.t [@@js.get "SIGVTALRM"]
 
-    val sigwinch : t -> Ojs.t
+    val sigprof : t -> Ojs.t [@@js.get "SIGPROF"]
 
-    val sigio : t -> Ojs.t
+    val sigwinch : t -> Ojs.t [@@js.get "SIGWINCH"]
 
-    val sigpoll : t -> Ojs.t
+    val sigio : t -> Ojs.t [@@js.get "SIGIO"]
 
-    val siglost : t -> Ojs.t
+    val sigpoll : t -> Ojs.t [@@js.get "SIGPOLL"]
 
-    val sigpwr : t -> Ojs.t
+    val siglost : t -> Ojs.t [@@js.get "SIGLOST"]
 
-    val siginfo : t -> Ojs.t
+    val sigpwr : t -> Ojs.t [@@js.get "SIGPWR"]
 
-    val sigsys : t -> Ojs.t
+    val siginfo : t -> Ojs.t [@@js.get "SIGINFO"]
 
-    val sigunused : t -> Ojs.t
+    val sigsys : t -> Ojs.t [@@js.get "SIGSYS"]
+
+    val sigunused : t -> Ojs.t [@@js.get "SIGUNUSED"]
   end
 
   module Errno : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val e2big : t -> Ojs.t
+    val t_of_js : Ojs.t -> t
 
-    val eacces : t -> Ojs.t
+    val e2big : t -> Ojs.t [@@js.get "E2BIG"]
 
-    val eaddrinuse : t -> Ojs.t
+    val eacces : t -> Ojs.t [@@js.get "EACCES"]
 
-    val eaddrnotavail : t -> Ojs.t
+    val eaddrinuse : t -> Ojs.t [@@js.get "EADDRINUSE"]
 
-    val eafnosupport : t -> Ojs.t
+    val eaddrnotavail : t -> Ojs.t [@@js.get "EADDRNOTAVAIL"]
 
-    val eagain : t -> Ojs.t
+    val eafnosupport : t -> Ojs.t [@@js.get "EAFNOSUPPORT"]
 
-    val ealready : t -> Ojs.t
+    val eagain : t -> Ojs.t [@@js.get "EAGAIN"]
 
-    val ebadf : t -> Ojs.t
+    val ealready : t -> Ojs.t [@@js.get "EALREADY"]
 
-    val ebadmsg : t -> Ojs.t
+    val ebadf : t -> Ojs.t [@@js.get "EBADF"]
 
-    val ebusy : t -> Ojs.t
+    val ebadmsg : t -> Ojs.t [@@js.get "EBADMSG"]
 
-    val ecanceled : t -> Ojs.t
+    val ebusy : t -> Ojs.t [@@js.get "EBUSY"]
 
-    val echild : t -> Ojs.t
+    val ecanceled : t -> Ojs.t [@@js.get "ECANCELED"]
 
-    val econnaborted : t -> Ojs.t
+    val echild : t -> Ojs.t [@@js.get "ECHILD"]
 
-    val econnrefused : t -> Ojs.t
+    val econnaborted : t -> Ojs.t [@@js.get "ECONNABORTED"]
 
-    val econnreset : t -> Ojs.t
+    val econnrefused : t -> Ojs.t [@@js.get "ECONNREFUSED"]
 
-    val edeadlk : t -> Ojs.t
+    val econnreset : t -> Ojs.t [@@js.get "ECONNRESET"]
 
-    val edestaddrreq : t -> Ojs.t
+    val edeadlk : t -> Ojs.t [@@js.get "EDEADLK"]
 
-    val edom : t -> Ojs.t
+    val edestaddrreq : t -> Ojs.t [@@js.get "EDESTADDRREQ"]
 
-    val edquot : t -> Ojs.t
+    val edom : t -> Ojs.t [@@js.get "EDOM"]
 
-    val eexist : t -> Ojs.t
+    val edquot : t -> Ojs.t [@@js.get "EDQUOT"]
 
-    val efault : t -> Ojs.t
+    val eexist : t -> Ojs.t [@@js.get "EEXIST"]
 
-    val efbig : t -> Ojs.t
+    val efault : t -> Ojs.t [@@js.get "EFAULT"]
 
-    val ehostunreach : t -> Ojs.t
+    val efbig : t -> Ojs.t [@@js.get "EFBIG"]
 
-    val eidrm : t -> Ojs.t
+    val ehostunreach : t -> Ojs.t [@@js.get "EHOSTUNREACH"]
 
-    val eilseq : t -> Ojs.t
+    val eidrm : t -> Ojs.t [@@js.get "EIDRM"]
 
-    val einprogress : t -> Ojs.t
+    val eilseq : t -> Ojs.t [@@js.get "EILSEQ"]
 
-    val eintr : t -> Ojs.t
+    val einprogress : t -> Ojs.t [@@js.get "EINPROGRESS"]
 
-    val einval : t -> Ojs.t
+    val eintr : t -> Ojs.t [@@js.get "EINTR"]
 
-    val eio : t -> Ojs.t
+    val einval : t -> Ojs.t [@@js.get "EINVAL"]
 
-    val eisconn : t -> Ojs.t
+    val eio : t -> Ojs.t [@@js.get "EIO"]
 
-    val eisdir : t -> Ojs.t
+    val eisconn : t -> Ojs.t [@@js.get "EISCONN"]
 
-    val eloop : t -> Ojs.t
+    val eisdir : t -> Ojs.t [@@js.get "EISDIR"]
 
-    val emfile : t -> Ojs.t
+    val eloop : t -> Ojs.t [@@js.get "ELOOP"]
 
-    val emlink : t -> Ojs.t
+    val emfile : t -> Ojs.t [@@js.get "EMFILE"]
 
-    val emsgsize : t -> Ojs.t
+    val emlink : t -> Ojs.t [@@js.get "EMLINK"]
 
-    val emultihop : t -> Ojs.t
+    val emsgsize : t -> Ojs.t [@@js.get "EMSGSIZE"]
 
-    val enametoolong : t -> Ojs.t
+    val emultihop : t -> Ojs.t [@@js.get "EMULTIHOP"]
 
-    val enetdown : t -> Ojs.t
+    val enametoolong : t -> Ojs.t [@@js.get "ENAMETOOLONG"]
 
-    val enetreset : t -> Ojs.t
+    val enetdown : t -> Ojs.t [@@js.get "ENETDOWN"]
 
-    val enetunreach : t -> Ojs.t
+    val enetreset : t -> Ojs.t [@@js.get "ENETRESET"]
 
-    val enfile : t -> Ojs.t
+    val enetunreach : t -> Ojs.t [@@js.get "ENETUNREACH"]
 
-    val enobufs : t -> Ojs.t
+    val enfile : t -> Ojs.t [@@js.get "ENFILE"]
 
-    val enodata : t -> Ojs.t
+    val enobufs : t -> Ojs.t [@@js.get "ENOBUFS"]
 
-    val enodev : t -> Ojs.t
+    val enodata : t -> Ojs.t [@@js.get "ENODATA"]
 
-    val enoent : t -> Ojs.t
+    val enodev : t -> Ojs.t [@@js.get "ENODEV"]
 
-    val enoexec : t -> Ojs.t
+    val enoent : t -> Ojs.t [@@js.get "ENOENT"]
 
-    val enolck : t -> Ojs.t
+    val enoexec : t -> Ojs.t [@@js.get "ENOEXEC"]
 
-    val enolink : t -> Ojs.t
+    val enolck : t -> Ojs.t [@@js.get "ENOLCK"]
 
-    val enomem : t -> Ojs.t
+    val enolink : t -> Ojs.t [@@js.get "ENOLINK"]
 
-    val enomsg : t -> Ojs.t
+    val enomem : t -> Ojs.t [@@js.get "ENOMEM"]
 
-    val enoprotoopt : t -> Ojs.t
+    val enomsg : t -> Ojs.t [@@js.get "ENOMSG"]
 
-    val enospc : t -> Ojs.t
+    val enoprotoopt : t -> Ojs.t [@@js.get "ENOPROTOOPT"]
 
-    val enosr : t -> Ojs.t
+    val enospc : t -> Ojs.t [@@js.get "ENOSPC"]
 
-    val enostr : t -> Ojs.t
+    val enosr : t -> Ojs.t [@@js.get "ENOSR"]
 
-    val enosys : t -> Ojs.t
+    val enostr : t -> Ojs.t [@@js.get "ENOSTR"]
 
-    val enotconn : t -> Ojs.t
+    val enosys : t -> Ojs.t [@@js.get "ENOSYS"]
 
-    val enotdir : t -> Ojs.t
+    val enotconn : t -> Ojs.t [@@js.get "ENOTCONN"]
 
-    val enotempty : t -> Ojs.t
+    val enotdir : t -> Ojs.t [@@js.get "ENOTDIR"]
 
-    val enotsock : t -> Ojs.t
+    val enotempty : t -> Ojs.t [@@js.get "ENOTEMPTY"]
 
-    val enotsup : t -> Ojs.t
+    val enotsock : t -> Ojs.t [@@js.get "ENOTSOCK"]
 
-    val enotty : t -> Ojs.t
+    val enotsup : t -> Ojs.t [@@js.get "ENOTSUP"]
 
-    val enxio : t -> Ojs.t
+    val enotty : t -> Ojs.t [@@js.get "ENOTTY"]
 
-    val eopnotsupp : t -> Ojs.t
+    val enxio : t -> Ojs.t [@@js.get "ENXIO"]
 
-    val eoverflow : t -> Ojs.t
+    val eopnotsupp : t -> Ojs.t [@@js.get "EOPNOTSUPP"]
 
-    val eperm : t -> Ojs.t
+    val eoverflow : t -> Ojs.t [@@js.get "EOVERFLOW"]
 
-    val epipe : t -> Ojs.t
+    val eperm : t -> Ojs.t [@@js.get "EPERM"]
 
-    val eproto : t -> Ojs.t
+    val epipe : t -> Ojs.t [@@js.get "EPIPE"]
 
-    val eprotonosupport : t -> Ojs.t
+    val eproto : t -> Ojs.t [@@js.get "EPROTO"]
 
-    val eprototype : t -> Ojs.t
+    val eprotonosupport : t -> Ojs.t [@@js.get "EPROTONOSUPPORT"]
 
-    val erange : t -> Ojs.t
+    val eprototype : t -> Ojs.t [@@js.get "EPROTOTYPE"]
 
-    val erofs : t -> Ojs.t
+    val erange : t -> Ojs.t [@@js.get "ERANGE"]
 
-    val espipe : t -> Ojs.t
+    val erofs : t -> Ojs.t [@@js.get "EROFS"]
 
-    val esrch : t -> Ojs.t
+    val espipe : t -> Ojs.t [@@js.get "ESPIPE"]
 
-    val estale : t -> Ojs.t
+    val esrch : t -> Ojs.t [@@js.get "ESRCH"]
 
-    val etime : t -> Ojs.t
+    val estale : t -> Ojs.t [@@js.get "ESTALE"]
 
-    val etimedout : t -> Ojs.t
+    val etime : t -> Ojs.t [@@js.get "ETIME"]
 
-    val etxtbsy : t -> Ojs.t
+    val etimedout : t -> Ojs.t [@@js.get "ETIMEDOUT"]
 
-    val ewouldblock : t -> Ojs.t
+    val etxtbsy : t -> Ojs.t [@@js.get "ETXTBSY"]
 
-    val exdev : t -> Ojs.t
+    val ewouldblock : t -> Ojs.t [@@js.get "EWOULDBLOCK"]
 
-    val wsaeintr : t -> Ojs.t
+    val exdev : t -> Ojs.t [@@js.get "EXDEV"]
 
-    val wsaebadf : t -> Ojs.t
+    val wsaeintr : t -> Ojs.t [@@js.get "WSAEINTR"]
 
-    val wsaeacces : t -> Ojs.t
+    val wsaebadf : t -> Ojs.t [@@js.get "WSAEBADF"]
 
-    val wsaefault : t -> Ojs.t
+    val wsaeacces : t -> Ojs.t [@@js.get "WSAEACCES"]
 
-    val wsaeinval : t -> Ojs.t
+    val wsaefault : t -> Ojs.t [@@js.get "WSAEFAULT"]
 
-    val wsaemfile : t -> Ojs.t
+    val wsaeinval : t -> Ojs.t [@@js.get "WSAEINVAL"]
 
-    val wsaewouldblock : t -> Ojs.t
+    val wsaemfile : t -> Ojs.t [@@js.get "WSAEMFILE"]
 
-    val wsaeinprogress : t -> Ojs.t
+    val wsaewouldblock : t -> Ojs.t [@@js.get "WSAEWOULDBLOCK"]
 
-    val wsaealready : t -> Ojs.t
+    val wsaeinprogress : t -> Ojs.t [@@js.get "WSAEINPROGRESS"]
 
-    val wsaenotsock : t -> Ojs.t
+    val wsaealready : t -> Ojs.t [@@js.get "WSAEALREADY"]
 
-    val wsaedestaddrreq : t -> Ojs.t
+    val wsaenotsock : t -> Ojs.t [@@js.get "WSAENOTSOCK"]
 
-    val wsaemsgsize : t -> Ojs.t
+    val wsaedestaddrreq : t -> Ojs.t [@@js.get "WSAEDESTADDRREQ"]
 
-    val wsaeprototype : t -> Ojs.t
+    val wsaemsgsize : t -> Ojs.t [@@js.get "WSAEMSGSIZE"]
 
-    val wsaenoprotoopt : t -> Ojs.t
+    val wsaeprototype : t -> Ojs.t [@@js.get "WSAEPROTOTYPE"]
 
-    val wsaeprotonosupport : t -> Ojs.t
+    val wsaenoprotoopt : t -> Ojs.t [@@js.get "WSAENOPROTOOPT"]
 
-    val wsaesocktnosupport : t -> Ojs.t
+    val wsaeprotonosupport : t -> Ojs.t [@@js.get "WSAEPROTONOSUPPORT"]
 
-    val wsaeopnotsupp : t -> Ojs.t
+    val wsaesocktnosupport : t -> Ojs.t [@@js.get "WSAESOCKTNOSUPPORT"]
 
-    val wsaepfnosupport : t -> Ojs.t
+    val wsaeopnotsupp : t -> Ojs.t [@@js.get "WSAEOPNOTSUPP"]
 
-    val wsaeafnosupport : t -> Ojs.t
+    val wsaepfnosupport : t -> Ojs.t [@@js.get "WSAEPFNOSUPPORT"]
 
-    val wsaeaddrinuse : t -> Ojs.t
+    val wsaeafnosupport : t -> Ojs.t [@@js.get "WSAEAFNOSUPPORT"]
 
-    val wsaeaddrnotavail : t -> Ojs.t
+    val wsaeaddrinuse : t -> Ojs.t [@@js.get "WSAEADDRINUSE"]
 
-    val wsaenetdown : t -> Ojs.t
+    val wsaeaddrnotavail : t -> Ojs.t [@@js.get "WSAEADDRNOTAVAIL"]
 
-    val wsaenetunreach : t -> Ojs.t
+    val wsaenetdown : t -> Ojs.t [@@js.get "WSAENETDOWN"]
 
-    val wsaenetreset : t -> Ojs.t
+    val wsaenetunreach : t -> Ojs.t [@@js.get "WSAENETUNREACH"]
 
-    val wsaeconnaborted : t -> Ojs.t
+    val wsaenetreset : t -> Ojs.t [@@js.get "WSAENETRESET"]
 
-    val wsaeconnreset : t -> Ojs.t
+    val wsaeconnaborted : t -> Ojs.t [@@js.get "WSAECONNABORTED"]
 
-    val wsaenobufs : t -> Ojs.t
+    val wsaeconnreset : t -> Ojs.t [@@js.get "WSAECONNRESET"]
 
-    val wsaeisconn : t -> Ojs.t
+    val wsaenobufs : t -> Ojs.t [@@js.get "WSAENOBUFS"]
 
-    val wsaenotconn : t -> Ojs.t
+    val wsaeisconn : t -> Ojs.t [@@js.get "WSAEISCONN"]
 
-    val wsaeshutdown : t -> Ojs.t
+    val wsaenotconn : t -> Ojs.t [@@js.get "WSAENOTCONN"]
 
-    val wsaetoomanyrefs : t -> Ojs.t
+    val wsaeshutdown : t -> Ojs.t [@@js.get "WSAESHUTDOWN"]
 
-    val wsaetimedout : t -> Ojs.t
+    val wsaetoomanyrefs : t -> Ojs.t [@@js.get "WSAETOOMANYREFS"]
 
-    val wsaeconnrefused : t -> Ojs.t
+    val wsaetimedout : t -> Ojs.t [@@js.get "WSAETIMEDOUT"]
 
-    val wsaeloop : t -> Ojs.t
+    val wsaeconnrefused : t -> Ojs.t [@@js.get "WSAECONNREFUSED"]
 
-    val wsaenametoolong : t -> Ojs.t
+    val wsaeloop : t -> Ojs.t [@@js.get "WSAELOOP"]
 
-    val wsaehostdown : t -> Ojs.t
+    val wsaenametoolong : t -> Ojs.t [@@js.get "WSAENAMETOOLONG"]
 
-    val wsaehostunreach : t -> Ojs.t
+    val wsaehostdown : t -> Ojs.t [@@js.get "WSAEHOSTDOWN"]
 
-    val wsaenotempty : t -> Ojs.t
+    val wsaehostunreach : t -> Ojs.t [@@js.get "WSAEHOSTUNREACH"]
 
-    val wsaeproclim : t -> Ojs.t
+    val wsaenotempty : t -> Ojs.t [@@js.get "WSAENOTEMPTY"]
 
-    val wsaeusers : t -> Ojs.t
+    val wsaeproclim : t -> Ojs.t [@@js.get "WSAEPROCLIM"]
 
-    val wsaedquot : t -> Ojs.t
+    val wsaeusers : t -> Ojs.t [@@js.get "WSAEUSERS"]
 
-    val wsaestale : t -> Ojs.t
+    val wsaedquot : t -> Ojs.t [@@js.get "WSAEDQUOT"]
 
-    val wsaeremote : t -> Ojs.t
+    val wsaestale : t -> Ojs.t [@@js.get "WSAESTALE"]
 
-    val wsasysnotready : t -> Ojs.t
+    val wsaeremote : t -> Ojs.t [@@js.get "WSAEREMOTE"]
 
-    val wsavernotsupported : t -> Ojs.t
+    val wsasysnotready : t -> Ojs.t [@@js.get "WSASYSNOTREADY"]
 
-    val wsanotinitialised : t -> Ojs.t
+    val wsavernotsupported : t -> Ojs.t [@@js.get "WSAVERNOTSUPPORTED"]
 
-    val wsaediscon : t -> Ojs.t
+    val wsanotinitialised : t -> Ojs.t [@@js.get "WSANOTINITIALISED"]
 
-    val wsaenomore : t -> Ojs.t
+    val wsaediscon : t -> Ojs.t [@@js.get "WSAEDISCON"]
 
-    val wsaecancelled : t -> Ojs.t
+    val wsaenomore : t -> Ojs.t [@@js.get "WSAENOMORE"]
 
-    val wsaeinvalidproctable : t -> Ojs.t
+    val wsaecancelled : t -> Ojs.t [@@js.get "WSAECANCELLED"]
 
-    val wsaeinvalidprovider : t -> Ojs.t
+    val wsaeinvalidproctable : t -> Ojs.t [@@js.get "WSAEINVALIDPROCTABLE"]
 
-    val wsaeproviderfailedinit : t -> Ojs.t
+    val wsaeinvalidprovider : t -> Ojs.t [@@js.get "WSAEINVALIDPROVIDER"]
 
-    val wsasyscallfailure : t -> Ojs.t
+    val wsaeproviderfailedinit : t -> Ojs.t [@@js.get "WSAEPROVIDERFAILEDINIT"]
 
-    val wsaservice_not_found : t -> Ojs.t
+    val wsasyscallfailure : t -> Ojs.t [@@js.get "WSASYSCALLFAILURE"]
 
-    val wsatype_not_found : t -> Ojs.t
+    val wsaservice_not_found : t -> Ojs.t [@@js.get "WSASERVICE_NOT_FOUND"]
 
-    val wsa_e_no_more : t -> Ojs.t
+    val wsatype_not_found : t -> Ojs.t [@@js.get "WSATYPE_NOT_FOUND"]
 
-    val wsa_e_cancelled : t -> Ojs.t
+    val wsa_e_no_more : t -> Ojs.t [@@js.get "WSA_E_NO_MORE"]
 
-    val wsaerefused : t -> Ojs.t
+    val wsa_e_cancelled : t -> Ojs.t [@@js.get "WSA_E_CANCELLED"]
+
+    val wsaerefused : t -> Ojs.t [@@js.get "WSAEREFUSED"]
   end
 
   module Dlopen : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val rtld_lazy : t -> Ojs.t
+    val t_of_js : Ojs.t -> t
 
-    val rtld_now : t -> Ojs.t
+    val rtld_lazy : t -> Ojs.t [@@js.get "RTLD_LAZY"]
 
-    val rtld_global : t -> Ojs.t
+    val rtld_now : t -> Ojs.t [@@js.get "RTLD_NOW"]
 
-    val rtld_local : t -> Ojs.t
+    val rtld_global : t -> Ojs.t [@@js.get "RTLD_GLOBAL"]
 
-    val rtld_deepbind : t -> Ojs.t
+    val rtld_local : t -> Ojs.t [@@js.get "RTLD_LOCAL"]
+
+    val rtld_deepbind : t -> Ojs.t [@@js.get "RTLD_DEEPBIND"]
   end
 
   module Priority : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val priority_low : t -> Ojs.t
+    val t_of_js : Ojs.t -> t
 
-    val priority_below_normal : t -> Ojs.t
+    val priority_low : t -> Ojs.t [@@js.get "PRIORITY_LOW"]
 
-    val priority_normal : t -> Ojs.t
+    val priority_below_normal : t -> Ojs.t [@@js.get "PRIORITY_BELOW_NORMAL"]
 
-    val priority_above_normal : t -> Ojs.t
+    val priority_normal : t -> Ojs.t [@@js.get "PRIORITY_NORMAL"]
 
-    val priority_high : t -> Ojs.t
+    val priority_above_normal : t -> Ojs.t [@@js.get "PRIORITY_ABOVE_NORMAL"]
 
-    val priority_highest : t -> Ojs.t
+    val priority_high : t -> Ojs.t [@@js.get "PRIORITY_HIGH"]
+
+    val priority_highest : t -> Ojs.t [@@js.get "PRIORITY_HIGHEST"]
   end
 
-  val signals : t -> Signals.t
+  val signals : t -> Signals.t [@@js.get "signals"]
 
-  val errno : t -> Errno.t
+  val errno : t -> Errno.t [@@js.get "errno"]
 
-  val dlopen : t -> Dlopen.t
+  val dlopen : t -> Dlopen.t [@@js.get "dlopen"]
 
-  val priority : t -> Priority.t
+  val priority : t -> Priority.t [@@js.get "priority"]
 end
 
 module NetworkInterface : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val address : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val netmask : t -> string
+  val address : t -> string [@@js.get]
 
-  val family : t -> string
+  val netmask : t -> string [@@js.get]
 
-  val mac : t -> string
+  val family : t -> string [@@js.get]
 
-  val internal : t -> bool
+  val mac : t -> string [@@js.get]
 
-  val scopeid : t -> int
+  val internal : t -> bool [@@js.get]
 
-  val cidr : t -> string
+  val scopeid : t -> int [@@js.get]
+
+  val cidr : t -> string [@@js.get]
 end
 
-val eol : unit -> string
+val eol : unit -> string [@@js.global "eol"]
 
-val arch : unit -> string
+val arch : unit -> string [@@js.global "arch"]
 
-val constants : Constant.t
+val constants : Constant.t [@@js.global "constants"]
 
-val cpus : unit -> CPU.t list
+val cpus : unit -> CPU.t list [@@js.global "cpus"]
 
-val endianness : unit -> string
+val endianness : unit -> string [@@js.global "endianness"]
 
-val freemem : unit -> int
+val freemem : unit -> int [@@js.global "freemem"]
 
-val getPriority : ?pid:int -> unit -> int
+val getPriority : ?pid:int -> unit -> int [@@js.global "getPriority"]
 
-val homedir : unit -> string
+val homedir : unit -> string [@@js.global "homedir"]
 
-val hostname : unit -> string
+val hostname : unit -> string [@@js.global "hostname"]
 
-val loadavg : unit -> int list
+val loadavg : unit -> int list [@@js.global "loadavg"]
 
 val networkInterfaces : unit -> NetworkInterface.t list
+  [@@js.global "networkInterfaces"]
 
-val platform : unit -> string
+val platform : unit -> string [@@js.global "platform"]
 
-val release : unit -> string
+val release : unit -> string [@@js.global "release"]
 
 val setPriority : ?pid:int -> priority:int -> unit
+  [@@js.global "setPriority"]
 
-val tmpdir : unit -> string
+val tmpdir : unit -> string [@@js.global "tmpdir"]
 
-val totalmem : unit -> int
+val totalmem : unit -> int [@@js.global "totalmem"]
 
-val type_ : unit -> string
+val type_ : unit -> string [@@js.global "type"]
 
-val uptime : unit -> int
+val uptime : unit -> int [@@js.global "uptime"]
 
 module UserInfoOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val create : encoding:string -> t
+  val t_of_js : Ojs.t -> t
+
+  val create : encoding:string -> t [@@js.builder]
 end
 
 module UserInfo : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val username : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val uid : t -> int
+  val username : t -> string [@@js.get]
 
-  val gid : t -> int
+  val uid : t -> int [@@js.get]
 
-  val shell : t -> string option
+  val gid : t -> int [@@js.get]
 
-  val homedir : t -> string
+  val shell : t -> string option [@@js.get]
+
+  val homedir : t -> string [@@js.get]
 end
 
 val userInfo : ?options:UserInfoOptions.t -> unit -> UserInfo.t
+  [@@js.global "userInfo"]
 
-val version : unit -> string
+val version : unit -> string [@@js.global "version"]

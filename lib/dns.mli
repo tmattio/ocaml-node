@@ -1,13 +1,15 @@
-open Import
+open Js
 
-val getServers : unit -> string list
+[@@@js.scope Import.dns]
+
+val getServers : unit -> string list [@@js.global "getServers"]
 
 module LookupOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val create
     :  ?family:int
@@ -16,6 +18,7 @@ module LookupOptions : sig
     -> ?verbatim:bool
     -> unit
     -> t
+    [@@js.builder]
 end
 
 val lookup
@@ -24,27 +27,30 @@ val lookup
   -> ?callback:(Error.t option -> string -> int -> unit)
   -> unit
   -> unit
+  [@@js.global "lookup"]
 
 val lookupService
   :  string
   -> int
   -> (Error.t option -> string -> int -> unit)
   -> unit
+  [@@js.global "lookupService"]
 
 val resolve
   :  string
   -> string
   -> (Error.t option -> string list -> unit)
   -> unit
+  [@@js.global "resolve"]
 
 module ResolveOptions : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val create : ?ttl:bool -> unit -> t
+  val t_of_js : Ojs.t -> t
+
+  val create : ?ttl:bool -> unit -> t [@@js.builder]
 end
 
 val resolve4
@@ -52,146 +58,160 @@ val resolve4
   -> ?options:ResolveOptions.t
   -> (Error.t option -> string list)
   -> unit
+  [@@js.global "resolve4"]
 
 val resolve6
   :  string
   -> ?options:ResolveOptions.t
   -> (Error.t option -> string list)
   -> unit
+  [@@js.global "resolve6"]
 
 val resolveAny : string -> (Error.t option -> Ojs.t list) -> unit
+  [@@js.global "resolveAny"]
 
 val resolveCname : string -> (Error.t option -> string list) -> unit
+  [@@js.global "resolveCname"]
 
 module ResolveCaaAddress : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val critical : t -> int
+  val t_of_js : Ojs.t -> t
 
-  val iodef : t -> string
+  val critical : t -> int [@@js.get]
+
+  val iodef : t -> string [@@js.get]
 end
 
 val resolveCaa : string -> (Error.t option -> ResolveCaaAddress.t list) -> unit
+  [@@js.global "resolveCaa"]
 
 module ResolveMxAddress : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val priority : t -> int
+  val t_of_js : Ojs.t -> t
 
-  val exchange : t -> string
+  val priority : t -> int [@@js.get]
+
+  val exchange : t -> string [@@js.get]
 end
 
 val resolveMx : string -> (Error.t option -> ResolveMxAddress.t list) -> unit
+  [@@js.global "resolveMx"]
 
 module ResolveNaptrAddress : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val flags : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val service : t -> string
+  val flags : t -> string [@@js.get]
 
-  val regexp : t -> string
+  val service : t -> string [@@js.get]
 
-  val replacement : t -> string
+  val regexp : t -> string [@@js.get]
 
-  val order : t -> int
+  val replacement : t -> string [@@js.get]
 
-  val preference : t -> int
+  val order : t -> int [@@js.get]
+
+  val preference : t -> int [@@js.get]
 end
 
 val resolveNaptr
   :  string
   -> (Error.t option -> ResolveNaptrAddress.t list)
   -> unit
+  [@@js.global "resolveNaptr"]
 
 val resolveNs : string -> (Error.t option -> string list) -> unit
+  [@@js.global "resolveNs"]
 
 val resolvePtr : string -> (Error.t option -> string list) -> unit
+  [@@js.global "resolvePtr"]
 
 module ResolveSoaAddress : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val nsname : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val hostmaster : t -> string
+  val nsname : t -> string [@@js.get]
 
-  val serial : t -> int
+  val hostmaster : t -> string [@@js.get]
 
-  val refresh : t -> int
+  val serial : t -> int [@@js.get]
 
-  val retry : t -> int
+  val refresh : t -> int [@@js.get]
 
-  val expire : t -> int
+  val retry : t -> int [@@js.get]
 
-  val minttl : t -> int
+  val expire : t -> int [@@js.get]
+
+  val minttl : t -> int [@@js.get]
 end
 
 val resolveSoa : string -> (Error.t option -> ResolveSoaAddress.t) -> unit
+  [@@js.global "resolveSoa"]
 
 module ResolveSrvAddress : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val name : t -> string
+  val t_of_js : Ojs.t -> t
 
-  val priority : t -> int
+  val name : t -> string [@@js.get]
 
-  val weight : t -> int
+  val priority : t -> int [@@js.get]
 
-  val port : t -> int
+  val weight : t -> int [@@js.get]
+
+  val port : t -> int [@@js.get]
 end
 
 val resolveSrv : string -> (Error.t option -> ResolveSrvAddress.t list) -> unit
+  [@@js.global "resolveSrv"]
 
 val resolveTxt : string -> (Error.t option -> string list list) -> unit
+  [@@js.global "resolveTxt"]
 
 val reverse : string -> (Error.t option -> string list -> unit) -> unit
+  [@@js.global "reverse"]
 
-val setServers : string list -> unit
+val setServers : string list -> unit [@@js.global "setServers"]
 
 module Resolver : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   module Options : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val create : ?timeout:int -> unit -> t
+    val t_of_js : Ojs.t -> t
+
+    val create : ?timeout:int -> unit -> t [@@js.builder]
   end
 
-  val create : ?options:Options.t -> unit -> t
+  val create : ?options:Options.t -> unit -> t [@@js.builder]
 
-  val cancel : t -> unit
+  val cancel : t -> unit [@@js.call]
 
   val setLocalAddress : t -> ?ipv4:string -> ?ipv6:string -> unit -> unit
+    [@@js.call]
 
-  val getServers : t -> string list
+  val getServers : t -> string list [@@js.call]
 
   val resolve
     :  t
@@ -199,62 +219,76 @@ module Resolver : sig
     -> string
     -> (Error.t option -> string list -> unit)
     -> unit
+    [@@js.call]
 
   val resolve4
     :  t
     -> string
-    -> ?options:t
+    -> ?options:ResolveOptions.t
     -> (Error.t option -> string list)
     -> unit
+    [@@js.call]
 
   val resolve6
     :  t
     -> string
-    -> ?options:t
+    -> ?options:ResolveOptions.t
     -> (Error.t option -> string list)
     -> unit
+    [@@js.call]
 
   val resolveAny : t -> string -> (Error.t option -> Ojs.t list) -> unit
+    [@@js.call]
 
   val resolveCname : t -> string -> (Error.t option -> string list) -> unit
+    [@@js.call]
 
   val resolveCaa
     :  t
     -> string
     -> (Error.t option -> ResolveCaaAddress.t list)
     -> unit
+    [@@js.call]
 
   val resolveMx
     :  t
     -> string
     -> (Error.t option -> ResolveMxAddress.t list)
     -> unit
+    [@@js.call]
 
   val resolveNaptr
     :  t
     -> string
     -> (Error.t option -> ResolveNaptrAddress.t list)
     -> unit
+    [@@js.call]
 
   val resolveNs : t -> string -> (Error.t option -> string list) -> unit
+    [@@js.call]
 
   val resolvePtr : t -> string -> (Error.t option -> string list) -> unit
+    [@@js.call]
 
   val resolveSoa
     :  t
     -> string
     -> (Error.t option -> ResolveSoaAddress.t)
     -> unit
+    [@@js.call]
 
   val resolveSrv
     :  t
     -> string
     -> (Error.t option -> ResolveSrvAddress.t list)
     -> unit
+    [@@js.call]
 
   val resolveTxt : t -> string -> (Error.t option -> string list list) -> unit
+    [@@js.call]
 
   val reverse : t -> string -> (Error.t option -> string list -> unit) -> unit
+    [@@js.call]
 
-  val setServers : t -> string list -> unit
+  val setServers : t -> string list -> unit [@@js.call]
 end

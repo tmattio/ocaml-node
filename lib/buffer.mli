@@ -1,79 +1,87 @@
-open Import
+open Js
+
+[@@@js.scope Import.buffer]
 
 module Blob : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val arrayBuffer : t -> ArrayBuffer.t Promise.t
+  val t_of_js : Ojs.t -> t
 
-  val size : t -> int
+  val arrayBuffer : t -> ArrayBuffer.t Promise.t [@@js.get]
+
+  val size : t -> int [@@js.get]
 
   val slice : t -> ?start:int -> ?end_:int -> ?type_:string -> unit -> t
+    [@@js.call]
 
-  val text : t -> string Promise.t
+  val text : t -> string Promise.t [@@js.get]
 
-  val type_ : t -> string
+  val type_ : t -> string [@@js.get "type"]
 
   module Options : sig
     type t
 
-    val t_of_js : Ojs.t -> t
-
     val t_to_js : t -> Ojs.t
 
-    val create : ?encoding:string -> ?type_:string -> unit -> t
+    val t_of_js : Ojs.t -> t
+
+    val create : ?encoding:string -> ?type_:string -> unit -> t [@@js.builder]
   end
 
   val create
     :  ?source:
-         [ `ArrayBuffers of ArrayBuffer.t list
-         | `Blobs of t list
-         | `Strings of string list
-         ]
+         ([ `Strings of string list
+          | `ArrayBuffers of ArrayBuffer.t list
+          | `Blobs of t list
+          ]
+         [@js.union])
     -> ?type_:string
     -> unit
     -> t
+    [@@js.builder]
 end
 
 module Buffer : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
 
   val alloc
     :  int
     -> ?fill:
-         [ `Buffer of t
-         | `Int of int
-         | `String of string
-         | `Uint8Array of Uint8Array.t
-         ]
+         ([ `String of string
+          | `Buffer of t
+          | `Uint8Array of Uint8Array.t
+          | `Int of int
+          ]
+         [@js.union])
     -> ?encoding:string
     -> unit
     -> unit
+    [@@js.global]
 
-  val allocUnsafe : int -> unit
+  val allocUnsafe : int -> unit [@@js.global]
 
   val allocUnsafeSlow : int -> unit
+    [@@js.global]
 
   val byteLength
-    :  [ `ArrayBuffer of ArrayBuffer.t | `Buffer of t | `String of string ]
+    :  ([ `String of string | `Buffer of t | `ArrayBuffer of ArrayBuffer.t ]
+       [@js.union])
     -> ?encoding:string
     -> unit
     -> int
+    [@@js.global]
 
-  val compare : t -> t -> int
+  val compare : t -> t -> int [@@js.global]
 
-  val append : t ref -> t -> unit
+  val concat : t list -> t [@@js.global]
 
-  val concat : t list -> t
-
-  val from_array : int list -> t
+  val from_array : int list -> t [@@js.global]
 
   val from_array_buffer
     :  ArrayBuffer.t
@@ -81,20 +89,25 @@ module Buffer : sig
     -> ?length:int
     -> unit
     -> t
+    [@@js.global]
 
-  val from_buffer : t -> t
+  val from_buffer : t -> t [@@js.global]
 
   val from_string : string -> ?encoding:string -> unit -> t
+    [@@js.global]
 
-  val isBuffer : t -> bool
+  val isBuffer : Ojs.t -> bool [@@js.global]
 
-  val isEncoding : string -> bool
+  val isEncoding : string -> bool [@@js.global]
 
-  val poolSize : int
+  val poolSize : int [@@js.global]
 
-  val buffer : t -> ArrayBuffer.t
+  (* TODO: How to bind index operators? *)
+  (* val index: t -> int -> int [@@js.call] *)
 
-  val byteOffset : t -> int
+  val buffer : t -> ArrayBuffer.t [@@js.get]
+
+  val byteOffset : t -> int [@@js.get]
 
   val compare_with
     :  t
@@ -105,6 +118,7 @@ module Buffer : sig
     -> ?sourceEnd:int
     -> unit
     -> int
+    [@@js.call]
 
   val copy
     :  t
@@ -114,115 +128,132 @@ module Buffer : sig
     -> ?sourceEnd:int
     -> unit
     -> int
+    [@@js.call]
 
-  val equals : t -> t -> bool
+  (* TODO: bind Iterator *)
+  (* val entries: t -> () [@@js.get] *)
+
+  val equals : t -> t -> bool [@@js.call]
 
   val fill
     :  t
-    -> [ `Buffer of t
-       | `Int of int
-       | `String of string
-       | `Uint8Array of Uint8Array.t
-       ]
+    -> ([ `String of string
+        | `Buffer of t
+        | `Uint8Array of Uint8Array.t
+        | `Int of int
+        ]
+       [@js.union])
     -> ?offset:int
     -> ?end_:int
     -> ?encoding:string
     -> unit
     -> t
+    [@@js.call]
 
   val includes
     :  t
-    -> [ `Buffer of t
-       | `Int of int
-       | `String of string
-       | `Uint8Array of Uint8Array.t
-       ]
+    -> ([ `String of string
+        | `Buffer of t
+        | `Uint8Array of Uint8Array.t
+        | `Int of int
+        ]
+       [@js.union])
     -> ?byteOffset:int
     -> ?encoding:string
     -> unit
     -> bool
+    [@@js.call]
 
   val indexOf
     :  t
-    -> [ `Buffer of t
-       | `Int of int
-       | `String of string
-       | `Uint8Array of Uint8Array.t
-       ]
+    -> ([ `String of string
+        | `Buffer of t
+        | `Uint8Array of Uint8Array.t
+        | `Int of int
+        ]
+       [@js.union])
     -> ?byteOffset:int
     -> ?encoding:string
     -> unit
     -> int
+    [@@js.call]
+
+  (* TODO: bind Iterator *)
+  (* val keys: t -> () [@@js.get] *)
 
   val lastIndexOf
     :  t
-    -> [ `Buffer of t
-       | `Int of int
-       | `String of string
-       | `Uint8Array of Uint8Array.t
-       ]
+    -> ([ `String of string
+        | `Buffer of t
+        | `Uint8Array of Uint8Array.t
+        | `Int of int
+        ]
+       [@js.union])
     -> ?byteOffset:int
     -> ?encoding:string
     -> unit
     -> int
+    [@@js.call]
 
-  val length : t -> int
+  val length : t -> int [@@js.get]
 
-  val readBigInt64BE : t -> ?offset:int -> unit -> int
+  val readBigInt64BE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readBigInt64LE : t -> ?offset:int -> unit -> int
+  val readBigInt64LE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readBigUInt64BE : t -> ?offset:int -> unit -> int
+  val readBigUInt64BE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readBigUInt64LE : t -> ?offset:int -> unit -> int
+  val readBigUInt64LE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readDoubleBE : t -> ?offset:int -> unit -> int
+  val readDoubleBE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readDoubleLE : t -> ?offset:int -> unit -> int
+  val readDoubleLE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readFloatBE : t -> ?offset:int -> unit -> int
+  val readFloatBE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readFloatLE : t -> ?offset:int -> unit -> int
+  val readFloatLE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readInt8 : t -> ?offset:int -> unit -> int
+  val readInt8 : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readInt16BE : t -> ?offset:int -> unit -> int
+  val readInt16BE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readInt16LE : t -> ?offset:int -> unit -> int
+  val readInt16LE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readInt32BE : t -> ?offset:int -> unit -> int
+  val readInt32BE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readInt32LE : t -> ?offset:int -> unit -> int
+  val readInt32LE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readIntBE : t -> ?offset:int -> ?byteLength:int -> unit -> int
+  val readIntBE : t -> ?offset:int -> ?byteLength:int -> unit -> int [@@js.call]
 
-  val readIntLE : t -> ?offset:int -> ?byteLength:int -> unit -> int
+  val readIntLE : t -> ?offset:int -> ?byteLength:int -> unit -> int [@@js.call]
 
-  val readUInt8 : t -> ?offset:int -> unit -> int
+  val readUInt8 : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readUInt16BE : t -> ?offset:int -> unit -> int
+  val readUInt16BE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readUInt16LE : t -> ?offset:int -> unit -> int
+  val readUInt16LE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readUInt32BE : t -> ?offset:int -> unit -> int
+  val readUInt32BE : t -> ?offset:int -> unit -> int [@@js.call]
 
-  val readUInt32LE : t -> ?offset:int -> unit -> int
+  val readUInt32LE : t -> ?offset:int -> unit -> int [@@js.call]
 
   val readUIntBE : t -> ?offset:int -> ?byteLength:int -> unit -> int
+    [@@js.call]
 
   val readUIntLE : t -> ?offset:int -> ?byteLength:int -> unit -> int
+    [@@js.call]
 
-  val subarray : t -> ?start:int -> ?end_:int -> unit -> t
+  val subarray : t -> ?start:int -> ?end_:int -> unit -> t [@@js.call]
 
-  val slice : t -> ?start:int -> ?end_:int -> unit -> t
+  val slice : t -> ?start:int -> ?end_:int -> unit -> t [@@js.call]
 
-  val swap16 : t -> t
+  val swap16 : t -> t [@@js.call]
 
-  val swap32 : t -> t
+  val swap32 : t -> t [@@js.call]
 
-  val swap64 : t -> t
+  val swap64 : t -> t [@@js.call]
 
-  val toJSON : t -> t
+  val toJSON : t -> Ojs.t [@@js.call]
 
   val toString
     :  t
@@ -231,6 +262,10 @@ module Buffer : sig
     -> ?end_:int
     -> unit
     -> string
+    [@@js.call]
+
+  (* TODO: bind Iterator *)
+  (* val values: t -> () [@@js.get] *)
 
   val write
     :  t
@@ -240,68 +275,70 @@ module Buffer : sig
     -> ?encoding:string
     -> unit
     -> int
+    [@@js.call]
 
-  val writeBigInt64BE : t -> int -> ?offset:int -> unit -> int
+  val writeBigInt64BE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeBigInt64LE : t -> int -> ?offset:int -> unit -> int
+  val writeBigInt64LE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeBigUInt64BE : t -> int -> ?offset:int -> unit -> int
+  val writeBigUInt64BE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeBigUInt64LE : t -> int -> ?offset:int -> unit -> int
+  val writeBigUInt64LE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeDoubleBE : t -> float -> ?offset:int -> unit -> int
+  val writeDoubleBE : t -> float -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeDoubleLE : t -> float -> ?offset:int -> unit -> int
+  val writeDoubleLE : t -> float -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeFloatBE : t -> float -> ?offset:int -> unit -> int
+  val writeFloatBE : t -> float -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeFloatLE : t -> float -> ?offset:int -> unit -> int
+  val writeFloatLE : t -> float -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeInt8 : t -> int -> ?offset:int -> unit -> int
+  val writeInt8 : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeInt16BE : t -> int -> ?offset:int -> unit -> int
+  val writeInt16BE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeInt16LE : t -> int -> ?offset:int -> unit -> int
+  val writeInt16LE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeInt32BE : t -> int -> ?offset:int -> unit -> int
+  val writeInt32BE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeInt32LE : t -> int -> ?offset:int -> unit -> int
+  val writeInt32LE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeIntBE : t -> int -> int -> int -> int
+  val writeIntBE : t -> int -> int -> int -> int [@@js.call]
 
-  val writeIntLE : t -> int -> int -> int -> int -> int
+  val writeIntLE : t -> int -> int -> int -> int -> int [@@js.call]
 
-  val writeUInt8 : t -> int -> ?offset:int -> unit -> int
+  val writeUInt8 : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeUInt16BE : t -> int -> ?offset:int -> unit -> int
+  val writeUInt16BE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeUInt16LE : t -> int -> ?offset:int -> unit -> int
+  val writeUInt16LE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeUInt32BE : t -> int -> ?offset:int -> unit -> int
+  val writeUInt32BE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeUInt32LE : t -> int -> ?offset:int -> unit -> int
+  val writeUInt32LE : t -> int -> ?offset:int -> unit -> int [@@js.call]
 
-  val writeUIntBE : t -> int -> int -> int -> int
+  val writeUIntBE : t -> int -> int -> int -> int [@@js.call]
 
-  val writeUIntLE : t -> int -> int -> int -> int
+  val writeUIntLE : t -> int -> int -> int -> int [@@js.call]
 end
 
 module Constants : sig
   type t
 
-  val t_of_js : Ojs.t -> t
-
   val t_to_js : t -> Ojs.t
 
-  val max_length : t -> int
+  val t_of_js : Ojs.t -> t
 
-  val max_string_length : t -> int
+  val max_length : t -> int [@@js.get "MAX_LENGTH"]
+
+  val max_string_length : t -> int [@@js.get "MAX_STRING_LENGTH"]
 end
 
-val inspect_max_bytes : int
+val inspect_max_bytes : int [@@js.global "INSPECT_MAX_BYTES"]
 
-val kMaxLength : int
+val kMaxLength : int [@@js.global "kMaxLength"]
 
 val transcode : Buffer.t -> string -> string -> Buffer.t
+  [@@js.global "transcode"]
 
-val constants : Constants.t
+val constants : Constants.t [@@js.global "constants"]
