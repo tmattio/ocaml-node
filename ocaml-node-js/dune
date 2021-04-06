@@ -1,0 +1,6 @@
+(library
+ (name ocaml_node_js)
+ (public_name ocaml-node-js)
+ (implements ocaml-node)
+ (libraries node)
+ (modes byte))

@@ -484,7 +484,7 @@ val freemem : unit -> int [@@js.global "freemem"]
 
 val getPriority : ?pid:int -> unit -> int [@@js.global "getPriority"]
 
-val homedir : unit -> string [@@js.global "homedir"]
+val homedir : unit -> string option [@@js.global "homedir"]
 
 val hostname : unit -> string [@@js.global "hostname"]
 

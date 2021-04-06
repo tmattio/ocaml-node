@@ -1,0 +1,5 @@
+(library
+ (name ocaml_node_unix)
+ (public_name ocaml-node-unix)
+ (implements ocaml-node)
+ (libraries luv))
