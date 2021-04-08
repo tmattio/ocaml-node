@@ -2,4 +2,14 @@
  (name ocaml_node_unix)
  (public_name ocaml-node-unix)
  (implements ocaml-node)
+ (private_modules
+  buffer
+  child_process
+  errors
+  fs
+  import
+  process
+  os
+  path
+  promise)
  (libraries luv))

@@ -41,6 +41,8 @@ module Error : sig
 
   val set_stack_trace_limit : int -> unit [@@js.set]
 
+  val name : t -> string [@@js.get]
+
   val code : t -> string [@@js.get]
 
   val message : t -> string [@@js.get]

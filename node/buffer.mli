@@ -80,9 +80,9 @@ module Buffer : sig
 
   val concat : t list -> t [@@js.global "Buffer.concat"]
 
-  val from_array : int list -> t [@@js.global "Buffer.from"]
+  val fromArray : int list -> t [@@js.global "Buffer.from"]
 
-  val from_array_buffer
+  val fromArrayBuffer
     :  ArrayBuffer.t
     -> ?byteOffset:int
     -> ?length:int
@@ -90,9 +90,9 @@ module Buffer : sig
     -> t
     [@@js.global "Buffer.from"]
 
-  val from_buffer : t -> t [@@js.global "Buffer.from"]
+  val fromBuffer : t -> t [@@js.global "Buffer.from"]
 
-  val from_string : string -> ?encoding:string -> unit -> t
+  val fromString : string -> ?encoding:string -> unit -> t
     [@@js.global "Buffer.from"]
 
   val isBuffer : Ojs.t -> bool [@@js.global "Buffer.isBuffer"]
@@ -108,7 +108,7 @@ module Buffer : sig
 
   val byteOffset : t -> int [@@js.get]
 
-  val compare_with
+  val compareWith
     :  t
     -> t
     -> ?targetStart:int

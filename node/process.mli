@@ -14,7 +14,9 @@ end
 
 val env : string Dict.t [@@js.global "env"]
 
-val argv : Argv.t [@@js.global "argv"]
+val argv : string list [@@js.global "argv"]
+
+val argv0 : string [@@js.global "argv0"]
 
 val cwd : unit -> string [@@js.global "cwd"]
 

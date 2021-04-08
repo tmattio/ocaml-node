@@ -2,6 +2,30 @@ open Js
 
 [@@@js.scope Import.fs]
 
+module Dirent : sig
+  type t
+
+  val t_to_js : t -> Ojs.t
+
+  val t_of_js : Ojs.t -> t
+
+  val isBlockDevice : t -> bool [@@js.call]
+
+  val isCharacterDevice : t -> bool [@@js.call]
+
+  val isDirectory : t -> bool [@@js.call]
+
+  val isFIFO : t -> bool [@@js.call]
+
+  val isFile : t -> bool [@@js.call]
+
+  val isSocket : t -> bool [@@js.call]
+
+  val isSymbolicLink : t -> bool [@@js.call]
+
+  val name : t -> string [@@js.get]
+end
+
 module Stats : sig
   type t
 
@@ -340,7 +364,7 @@ module MkdirOptions : sig
 
   val t_of_js : Ojs.t -> t
 
-  val create : ?recursive:bool -> ?mode:string -> unit -> t [@@js.builder]
+  val create : ?recursive:bool -> ?mode:int -> unit -> t [@@js.builder]
 end
 
 val mkdirSync : string -> ?options:MkdirOptions.t -> unit -> unit
@@ -384,6 +408,10 @@ module ReaddirOptions : sig
 end
 
 val readdirSync : string -> ?options:ReaddirOptions.t -> unit -> string list
+  [@@js.global "readdirSync"]
+
+(* TODO: We should set the [withFileTypes] for users here. *)
+val readdirSync' : string -> ?options:ReaddirOptions.t -> unit -> Dirent.t list
   [@@js.global "readdirSync"]
 
 module ReadFileOptions : sig

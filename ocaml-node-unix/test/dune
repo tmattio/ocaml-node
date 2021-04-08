@@ -1,0 +1,4 @@
+(tests
+ (names fs_test)
+ (libraries alcotest ocaml-node ocaml-node-unix)
+ (modes native byte))

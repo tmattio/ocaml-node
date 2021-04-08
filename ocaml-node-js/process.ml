@@ -1,4 +1,4 @@
-type platform = Process.platform =
+type platform =
   | Darwin
   | Freebsd
   | Linux
@@ -7,7 +7,7 @@ type platform = Process.platform =
   | Win32
   | Android
 
-type arch = Process.arch =
+type arch =
   | Arm
   | Arm64
   | Ia32
@@ -64,29 +64,12 @@ let arch_of_string = function
   | _ ->
     assert false
 
-let eol = Node.Os.eol ()
+let env = Node.Process.env
 
-let arch = Node.Os.arch () |> arch_of_string
+let argv = Node.Process.argv
 
-let platform = Node.Os.platform () |> platform_of_string
+let cwd () = Node.Process.cwd ()
 
-let homedir = Node.Os.homedir
+let arch = Node.Process.arch |> arch_of_string
 
-type user_info =
-  { username : string
-  ; uid : int
-  ; gid : int
-  ; shell : string option
-  ; homedir : string
-  }
-
-let version () = Node.Os.version ()
-
-let user_info () =
-  let user_info = Node.Os.userInfo () in
-  { username = Node.Os.UserInfo.username user_info
-  ; uid = Node.Os.UserInfo.uid user_info
-  ; gid = Node.Os.UserInfo.gid user_info
-  ; shell = Node.Os.UserInfo.shell user_info
-  ; homedir = Node.Os.UserInfo.homedir user_info
-  }
+let platform = Node.Process.platform |> platform_of_string

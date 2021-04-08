@@ -1,4 +1,4 @@
 (library
  (name ocaml_node)
  (public_name ocaml-node)
- (virtual_modules os))
+ (virtual_modules ocaml_node))

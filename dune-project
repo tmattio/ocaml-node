@@ -48,6 +48,7 @@
   (ocaml
    (>= 4.08.0))
   dune
+  js_of_ocaml-ppx
   (odoc :with-doc)))
 
 (package
@@ -59,4 +60,5 @@
    (>= 4.08.0))
   dune
   luv
-  (odoc :with-doc)))
+  (odoc :with-doc)
+  (alcotest :with-test)))
